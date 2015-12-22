@@ -195,6 +195,7 @@ public class ServerGameController implements Runnable {
                     else
                         columnDifference = clientPositions.get(j)[1] - robotList.get(i).position[1];
 
+                    //Compares to the current closest clients
                     if(closestClient != -1) {
                         int currentClosestClientRowDifference;
                         if (robotList.get(i).position[0] > clientPositions.get(closestClient)[0])
@@ -207,7 +208,7 @@ public class ServerGameController implements Runnable {
                             currentClosestClientColumnDifference = robotList.get(i).position[1] - clientPositions.get(closestClient)[1];
                         else
                             currentClosestClientColumnDifference = clientPositions.get(closestClient)[1] - robotList.get(i).position[1];
-                        if((rowDifference < Settings.robotPerceptionRowRange) && (columnDifference < Settings.robotPerceptionColumnRange)) {
+                        if((rowDifference <= Settings.robotPerceptionRowRange) && (columnDifference <= Settings.robotPerceptionColumnRange)) {
                             if ((rowDifference + columnDifference) < (currentClosestClientRowDifference + currentClosestClientColumnDifference)) {
                                 closestClient = j;
                             }
@@ -215,7 +216,7 @@ public class ServerGameController implements Runnable {
                     }
                     else
                     {
-                        if((rowDifference < Settings.robotPerceptionRowRange) && (columnDifference < Settings.robotPerceptionColumnRange)) {
+                        if((rowDifference <= Settings.robotPerceptionRowRange) && (columnDifference <= Settings.robotPerceptionColumnRange)) {
                             closestClient = j;
                         }
                     }

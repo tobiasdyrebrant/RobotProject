@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="787.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tobdyh131.ServerPlayingController">
+   <children>
+      <GridPane fx:id="gridPane" gridLinesVisible="true" layoutX="14.0" layoutY="14.0" prefHeight="495.0" prefWidth="549.0">
+      </GridPane>
+      <TextArea editable="false" layoutX="573.0" layoutY="236.0" prefHeight="179.0" prefWidth="200.0" />
+      <Button layoutX="573.0" layoutY="430.0" mnemonicParsing="false" prefHeight="79.0" prefWidth="200.0" text="Disconnect selected client" />
+      <ListView layoutX="573.0" layoutY="30.0" prefHeight="200.0" prefWidth="200.0" />
+      <Text layoutX="573.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Info about the players alive:" />
+   </children>
+</AnchorPane>

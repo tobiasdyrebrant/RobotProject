@@ -30,31 +30,36 @@ public class Client extends Application implements Runnable{
     public static void main(String[] args) {
         LOGGER.setLevel(Level.OFF);
 
-
-        (new Thread(new Client(args))).start();
+        launch(args);
+        //(new Thread(new Client(args))).start();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("ServerStartupScene.fxml"));
-        primaryStage.setTitle("Server startup");
-        primaryStage.setScene(new Scene(root, 725, 500));
+        Parent root = FXMLLoader.load(getClass().getResource("ServerPlayingScene.fxml"));
+        primaryStage.setTitle("Client startup");
+        primaryStage.setScene(new Scene(root, 315, 500));
+        //primaryStage.setResizable(false);
         primaryStage.show();
     }
 
-    public Client(String[] args)
+    public Client()
+    {
+
+    }
+
+    //TODO
+    //Spara på disk
+    public Client(InetAddress ip, int port, String UserName)
     {
         try {
-            InetAddress addr;
-            if (args.length >= 1)
-                addr = InetAddress.getByName(args[0]);
-            else
-                addr = InetAddress.getByName(null);
-            Socket socket = new Socket(addr, PORT);
+            Socket socket = new Socket(ip, PORT);
 
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
             kdb_reader = new BufferedReader(new InputStreamReader(System.in));
+
+            out.println(UserName);
 
             ServerListener t = new ServerListener(in);
 
@@ -65,6 +70,7 @@ public class Client extends Application implements Runnable{
             LOGGER.info("Client constructor I/O error : " + e.getMessage());
         }
     }
+
 
     public void run()
     {
