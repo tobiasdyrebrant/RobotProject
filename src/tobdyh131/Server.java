@@ -105,6 +105,7 @@ public class Server extends Application implements Runnable {
                         //TODO
                         //Ska det vara >= eller bara == ?
                         if(ServerCommunicationController.GetNumberOfPlayers() >= Settings.numberOfPlayersBeforeStart) {
+                            ServerCommunicationController.SendToClients("start;" + Settings.height + ";" + Settings.width + ";");
                             (new Thread(new ServerGameController(Settings))).start();
                         }
                         else

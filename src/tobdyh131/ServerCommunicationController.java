@@ -56,8 +56,8 @@ public class ServerCommunicationController implements Runnable{
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
-        String clientUserName = in.readLine();
-        this.clientUserName = clientUserName;
+        this.clientUserName = in.readLine();
+
 
         out.println("You're connected too the server");
         allClients.add(this);
@@ -171,6 +171,13 @@ public class ServerCommunicationController implements Runnable{
     public static synchronized void NextPlayerTurn()
     {
        PlayerTurnIndex = (PlayerTurnIndex == numberOfClients) ? 0 : ++PlayerTurnIndex;
+    }
+
+    public static synchronized void SendToClients(String msg)
+    {
+        for (ServerCommunicationController SCC : ServerCommunicationController.GetAllClients()) {
+            SCC.out.println(msg);
+        }
     }
 
     public static synchronized int GetNumberOfPlayers()
@@ -289,6 +296,31 @@ public class ServerCommunicationController implements Runnable{
         }
     }
 
+    public static synchronized  void SendUpdatedBoardToClients(int[][] Board)
+    {
+        String boardInfo = "board;";
+
+        for (int i = 0; i < Board[0].length; i++) {
+            for (int j = 0; j < Board[1].length; j++) {
+                if(Board[i][j] == -1)
+                {
+                    boardInfo += "rubble;"+ i + ";" + j + ";";
+                }
+                else if(Board[i][j] < -1)
+                {
+                    boardInfo += "robot;"+ Board[i][j] + ";" + i + ";" + j + ";";
+                }
+                else if(Board[i][j] > 0)
+                {
+                    boardInfo += "client;"+ Board[i][j] + ";" + i + ";" + j + ";";
+                }
+            }
+        }
+
+        for (ServerCommunicationController SCC: allClients) {
+            SCC.out.println(boardInfo);
+        }
+    }
 
 
     public static void RespawnPlayers()

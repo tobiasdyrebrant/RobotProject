@@ -49,6 +49,10 @@ public class ServerGameController implements Runnable {
         ServerCommunicationController.SetNumberOfShortRangeAttacks(Settings.numberOfShortRangeAttacksAwardedPerLevel);
         ServerCommunicationController.SetNumberOfSafeTeleportations(Settings.numberOfSafeTeleportationsAwardedPerLevel);
 
+        ServerCommunicationController.SendUpdatedBoardToClients(Board);
+        if(ServerCommunicationController.GetPlayerTurn() > 0 && (ServerCommunicationController.GetAllClients().size() > 0))
+            ServerCommunicationController.SendToClients("levelinfo;" + Round + ";" + Level + ";" + ServerCommunicationController.GetAllClients().get(ServerCommunicationController.GetPlayerTurn() - 1).GetClientId() + ";");
+
     }
 
 
@@ -103,6 +107,9 @@ public class ServerGameController implements Runnable {
                     }
 
                     ServerCommunicationController.PrintBoardForAllClients();
+                    if(ServerCommunicationController.GetPlayerTurn() > 0 && (ServerCommunicationController.GetAllClients().size() > 0))
+                        ServerCommunicationController.SendToClients("levelinfo;" + Round + ";" + Level + ";" + ServerCommunicationController.GetAllClients().get(ServerCommunicationController.GetPlayerTurn() - 1).GetClientId() + ";");
+                    ServerCommunicationController.SendUpdatedBoardToClients(Board);
                 }
 
                 if (ServerCommunicationController.GetPlayerTurn() == 0) {
@@ -117,6 +124,10 @@ public class ServerGameController implements Runnable {
                     ServerCommunicationController.NextPlayerTurn();
                     Round++;
                     ServerCommunicationController.PrintBoardForAllClients();
+                    ServerCommunicationController.SendUpdatedBoardToClients(Board);
+                    if(ServerCommunicationController.GetPlayerTurn() > 0 && (ServerCommunicationController.GetAllClients().size() > 0))
+                        ServerCommunicationController.SendToClients("levelinfo;" + Round + ";" + Level + ";" + ServerCommunicationController.GetAllClients().get(ServerCommunicationController.GetPlayerTurn() - 1).GetClientId() + ";");
+
                     ServerCommunicationController.ResetDeadlines();
 
                 }
