@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="590.0" prefWidth="813.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tobdyh131.ServerStartupController">
+   <children>
+      <Text layoutX="77.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Board height" wrappingWidth="90.13671875" />
+      <TextField fx:id="height" layoutX="231.0" layoutY="87.0" text="5" />
+      <Text layoutX="77.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Board width" wrappingWidth="90.13671875" />
+      <TextField fx:id="width" layoutX="231.0" layoutY="122.0" text="5" />
+      <TextField fx:id="numberOfPlayersBeforeStart" layoutX="231.0" layoutY="157.0" text="1" />
+      <TextField fx:id="numberOfRoundsPerLevel" layoutX="231.0" layoutY="192.0" text="5" />
+      <TextField fx:id="numberOfRobots" layoutX="231.0" layoutY="227.0" text="0" />
+      <TextField fx:id="increaseOfRobotsPerLevel" layoutX="231.0" layoutY="262.0" text="1" />
+      <Text layoutX="77.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Players before start" wrappingWidth="121.13671875" />
+      <Text layoutX="77.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rounds per level" wrappingWidth="121.13671875" />
+      <Text layoutX="77.0" layoutY="244.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Robots " wrappingWidth="90.13671875" />
+      <Text layoutX="77.0" layoutY="279.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Robots increase per level" wrappingWidth="136.13671875" />
+      <Text layoutX="393.0" layoutY="279.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Robot row perception range" wrappingWidth="160.0" />
+      <Text layoutX="392.0" layoutY="244.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Short range attackes per level" wrappingWidth="161.13671875" />
+      <Text layoutX="392.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Safe teleportations per level" wrappingWidth="161.13671875" />
+      <Text layoutX="391.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Safe teleportations awarded per kill" wrappingWidth="204.13671875" />
+      <TextField fx:id="numberOfRubbles" layoutX="588.0" layoutY="87.0" text="4" />
+      <TextField fx:id="changeOfRubblesPerLevel" layoutX="588.0" layoutY="122.0" text="1" />
+      <TextField fx:id="numberOfSafeTeleportationsAwardedPerKill" layoutX="588.0" layoutY="157.0" text="1" />
+      <TextField fx:id="numberOfSafeTeleportationsAwardedPerLevel" layoutX="588.0" layoutY="192.0" text="1" />
+      <TextField fx:id="numberOfShortRangeAttacksAwardedPerLevel" layoutX="588.0" layoutY="227.0" text="2" />
+      <TextField fx:id="robotPerceptionRowRange" layoutX="588.0" layoutY="262.0" text="3" />
+      <Text layoutX="392.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Change of rubbles per level" wrappingWidth="149.0" />
+      <Text layoutX="392.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rubbles" wrappingWidth="90.13671875" />
+      <TextField fx:id="robotPerceptionColumnRange" layoutX="588.0" layoutY="297.0" text="3" />
+      <TextField fx:id="port" layoutX="588.0" layoutY="332.0" text="1111" />
+      <Text layoutX="394.0" layoutY="314.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Robot column perception range" wrappingWidth="176.13671875" />
+      <CheckBox fx:id="robotsMergeOnCollision" layoutX="77.0" layoutY="298.0" mnemonicParsing="false" selected="true" text="Robots merge on collision" />
+      <CheckBox fx:id="shortRangeAttacksKillsAllAdjacentRobots" layoutX="77.0" layoutY="326.0" mnemonicParsing="false" selected="true" text="Short range attacks kills all adjacent robots" />
+      <CheckBox fx:id="robotsLockToTarget" layoutX="77.0" layoutY="354.0" mnemonicParsing="false" text="Robots locks to a target" />
+      <Text layoutX="394.0" layoutY="348.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port" wrappingWidth="37.990234375" />
+      <Button fx:id="hostButton" layoutX="249.0" layoutY="420.0" mnemonicParsing="false" onAction="#handleHostAction" prefHeight="83.0" prefWidth="328.0" text="Host game on port">
+         <font>
+            <Font size="27.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPress" prefHeight="598.0" prefWidth="765.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tobdyh131.ClientPlayingController">
+   <children>
+      <GridPane fx:id="gridPane" gridLinesVisible="true" layoutX="14.0" layoutY="30.0" prefHeight="556.0" prefWidth="559.0">
+         <columnConstraints>
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+         </rowConstraints></GridPane>
+      <Button fx:id="moveRight" layoutX="676.0" layoutY="73.0" mnemonicParsing="false" onAction="#handleMoveRight" prefHeight="25.0" prefWidth="59.0" text="-&gt;" />
+      <Button fx:id="moveDown" layoutX="634.0" layoutY="115.0" mnemonicParsing="false" onAction="#handleMoveDown" prefHeight="25.0" prefWidth="59.0" rotate="90.0" text="-&gt;" />
+      <Button fx:id="moveUp" layoutX="634.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleMoveUp" prefHeight="25.0" prefWidth="59.0" rotate="-90.0" text="-&gt;" />
+      <Button fx:id="moveLeft" layoutX="592.0" layoutY="73.0" mnemonicParsing="false" onAction="#handleMoveLeft" prefHeight="25.0" prefWidth="59.0" text="&lt;-" />
+      <Button fx:id="moveUpLeft" layoutX="592.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleMoveUpLeft" prefHeight="25.0" prefWidth="59.0" rotate="45.0" text="&lt;-" />
+      <Button fx:id="moveUpRight" layoutX="676.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleMoveUpRight" prefHeight="25.0" prefWidth="59.0" rotate="-45.0" text="-&gt;" />
+      <Button fx:id="moveDownRight" layoutX="676.0" layoutY="115.0" mnemonicParsing="false" onAction="#handleMoveDownRight" prefHeight="25.0" prefWidth="59.0" rotate="45.0" text="-&gt;" />
+      <Button fx:id="moveDownLeft" layoutX="592.0" layoutY="115.0" mnemonicParsing="false" onAction="#handleMoveDownLeft" prefHeight="25.0" prefWidth="59.0" rotate="135.0" text="-&gt;" />
+      <TextArea fx:id="consoleOutput" editable="false" layoutX="582.0" layoutY="373.0" prefHeight="141.0" prefWidth="161.0" />
+      <Button layoutX="585.0" layoutY="533.0" mnemonicParsing="false" onAction="#handleDisconnect" prefHeight="53.0" prefWidth="161.0" text="Disconnect" />
+      <Button layoutX="583.0" layoutY="167.0" mnemonicParsing="false" onAction="#handleRandomTeleport" prefHeight="41.0" prefWidth="161.0" text="Random Teleport" />
+      <Button layoutX="583.0" layoutY="217.0" mnemonicParsing="false" onAction="#handleSafeTeleport" prefHeight="41.0" prefWidth="161.0" text="Safe Teleport" />
+      <Button layoutX="583.0" layoutY="267.0" mnemonicParsing="false" onAction="#handleShortRangeAttack" prefHeight="41.0" prefWidth="161.0" text="Short Range Attack" />
+      <Button layoutX="583.0" layoutY="314.0" mnemonicParsing="false" onAction="#handleWait" prefHeight="41.0" prefWidth="161.0" text="Wait" />
+      <Text fx:id="Round" layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Round: " wrappingWidth="78.13671875" />
+      <Text fx:id="Level" layoutX="92.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Level:" wrappingWidth="78.13671875" />
+      <Text fx:id="PlayerTurn" layoutX="170.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player number 1's turn" wrappingWidth="128.13671875" />
+      <Text fx:id="ClientId" layoutX="308.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your own id: " wrappingWidth="101.13671875" />
+   </children>
+</AnchorPane>
