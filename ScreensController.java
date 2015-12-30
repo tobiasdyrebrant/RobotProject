@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -13,6 +14,7 @@ import javafx.stage.Stage;
 import java.awt.event.ActionEvent;
 import java.beans.EventHandler;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -63,6 +65,7 @@ public class ScreensController extends StackPane {
 
             myLoader.<ServerDuringConnectionController>getController().server = s;
             myLoader.<ServerDuringConnectionController>getController().startWaitingForConnections();
+            s.controller = myLoader.<ServerDuringConnectionController>getController();
 
             addScreen(name, loadScreen);
             return true;
@@ -82,6 +85,47 @@ public class ScreensController extends StackPane {
             myScreenController.setScreenParent(this);
 
             myLoader.<ServerPlayingController>getController().settings = s;
+
+            addScreen(name, loadScreen);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean loadScreen(String name, String resource, boolean ConsecutiveRound) {
+        try {
+            FXMLLoader myLoader = new
+                    FXMLLoader(getClass().getResource(resource));
+            Parent loadScreen = (Parent) myLoader.load();
+            ControlledScreen myScreenController =
+                    ((ControlledScreen) myLoader.getController());
+            myScreenController.setScreenParent(this);
+
+            if(ConsecutiveRound)
+            {
+                myLoader.<ServerStartupController>getController().ReadSettingsFromFile();
+            }
+
+            addScreen(name, loadScreen);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean loadScreen(String name, String resource, ObservableList<HighscoreInfo> highscoreList) {
+        try {
+            FXMLLoader myLoader = new
+                    FXMLLoader(getClass().getResource(resource));
+            Parent loadScreen = (Parent) myLoader.load();
+            ControlledScreen myScreenController =
+                    ((ControlledScreen) myLoader.getController());
+            myScreenController.setScreenParent(this);
+
+            myLoader.<HighscoreController>getController().highscoreList = highscoreList;
 
             addScreen(name, loadScreen);
             return true;

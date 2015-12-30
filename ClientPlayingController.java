@@ -1,6 +1,7 @@
 package tobdyh131;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,6 +19,7 @@ import javafx.stage.Stage;
 
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -404,7 +406,6 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         try
         {
             myClient.queue.put("quit");
-            showHighScoreScene();
 
         }
         catch(InterruptedException e)
@@ -415,7 +416,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
 
 
     @FXML
-    public void showHighScoreScene()
+    public void showHighScoreScene(ObservableList<HighscoreInfo> highscoreList)
     {
        Platform.runLater(()->{
            myClient.disconnectClient();
@@ -427,8 +428,10 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
 
            //TODO
            //Fixa highscore här
-           Stage s = (Stage)moveUp.getScene().getWindow();
-           s.close();
+
+           myController.loadScreen("highscoreScene", "HighscoreScene.fxml", highscoreList);
+           myController.setScreen("highscoreScene");
+
        });
     }
 

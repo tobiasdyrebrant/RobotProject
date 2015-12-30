@@ -1,9 +1,12 @@
 package tobdyh131;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Tobias on 2015-11-24.
@@ -67,11 +70,24 @@ public class ServerListener extends Thread {
                             if (line[0].equals("id")) {
                                 ((ClientPlayingController) controller).clientId = Integer.valueOf(line[1]);
                             }
-                        } else if (lineFromServer.equals("disconnected") || lineFromServer.equals("killed")) {
-                            ((ClientPlayingController) controller).showHighScoreScene();
-                            ClientConnected = false;
-                            break;
-                        } else if (lineFromServer.equals("no sra")) {
+                            if(line[0].equals("disconnected") || line[0].equals("killed"))
+                            {
+                                ObservableList<HighscoreInfo> highScoreList = FXCollections.observableArrayList();
+                                int index = 1;
+                                while(index < line.length)
+                                {
+                                    HighscoreInfo hsi = new HighscoreInfo(line[index], Integer.valueOf(line[index + 1]));
+                                    highScoreList.add(hsi);
+                                    index += 2;
+                                }
+
+                                ((ClientPlayingController) controller).showHighScoreScene(highScoreList);
+                                ClientConnected = false;
+                                break;
+                            }
+                        }
+
+                        else if (lineFromServer.equals("no sra")) {
                             ((ClientPlayingController) controller).WriteToTextArea("You've used all the short range attacks for this level \n");
                         } else if (lineFromServer.equals("no st")) {
                             ((ClientPlayingController) controller).WriteToTextArea("You can't safe teleport anymore,\n either kill an enemy or survive to the next round \n");
@@ -80,9 +96,9 @@ public class ServerListener extends Thread {
                 }
             catch(IOException e) {
                 System.out.println("Could not read from server!");
+                ClientConnected = false;
             }
         }
 
-        System.out.println("Closing server listener");
     }
 }

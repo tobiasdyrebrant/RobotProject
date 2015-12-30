@@ -51,6 +51,15 @@ public class ServerDuringConnectionController implements Initializable, Controll
 
     }
 
+    //Client disconnected during connection time
+    public void playerDisconnected(int ClientID)
+    {
+        int clientIndex = CommunicationThread.GetClientIndex(ClientID);
+        listOfPlayers.remove(clientIndex);
+        CommunicationThread.DisconnectClient(clientIndex);
+        CommunicationThread.ResetClientNumbers();
+    }
+
     @FXML
     public void handleStartGame()
     {
@@ -97,6 +106,5 @@ public class ServerDuringConnectionController implements Initializable, Controll
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
     }
 }

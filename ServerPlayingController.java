@@ -101,7 +101,6 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
         }
 
         scoreBoard.remove(index);
-        System.out.println(index);
         UpdateScoreBoard();
     }
 
@@ -203,7 +202,7 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
     public void GoToStartup()
     {
         Platform.runLater(()-> {
-            myController.loadScreen("serverStartup", "ServerStartupScene.fxml");
+            myController.loadScreen("serverStartup", "ServerStartupScene.fxml", true);
 
             myController.setScreen("serverStartup");
         });

@@ -25,20 +25,15 @@ public class Server extends Application implements Runnable {
 
     private ServerSettings Settings;
 
-
-    //TODO
-    //Fixa så att det går att köra runt och runt... just nu dör inte clienter samt att på nästa runda när man ska köra igen
-    // och en ny klient connectar så kommer den inte upp på spelplanen sen när servern sedan starta severn igen -.-
+    public Object controller;
 
     //TODO
     //HIGHSCORELIST
     //Läs från en fil med hela listen, och sen så skicka genom en sträng hela skiten liknande allt annat.
 
     //TODO
-    //Fixa så att scoreboarden uppdateras när en spelare disconnectar självmant...
+    //Skall en client kunna disconnecta under connect scenen så fixa det.
 
-    //TODO
-    //Spara på disk när det körs igen
     public static void main(String[] args) {
         launch();
     }
@@ -107,6 +102,16 @@ public class Server extends Application implements Runnable {
                     }
                 }
             }
+            /*
+            else
+            {
+                while((msg = queue.poll()) != null)
+                {
+                    if(msg.Message.equals("quit"))
+                        ((ServerDuringConnectionController)controller).playerDisconnected(msg.ClientId);
+                }
+            }
+            */
 
         }
 

@@ -5,10 +5,9 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="598.0" prefWidth="765.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tobdyh131.HighscoreController">
    <children>
-      <ListView layoutX="14.0" layoutY="50.0" prefHeight="535.0" prefWidth="374.0" />
+      <ListView fx:id="highScore" layoutX="14.0" layoutY="50.0" prefHeight="535.0" prefWidth="374.0" />
       <Button fx:id="dismiss" layoutX="403.0" layoutY="417.0" mnemonicParsing="false" onAction="#handleDismiss" prefHeight="162.0" prefWidth="343.0" text="Dismiss">
          <font>
             <Font size="49.0" />

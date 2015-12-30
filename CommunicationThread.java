@@ -1,11 +1,11 @@
 package tobdyh131;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.Socket;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
-import java.util.TimerTask;
 
 /**
  * Created by Tobias on 2015-11-27.
@@ -17,6 +17,7 @@ public class CommunicationThread implements Runnable{
     private int clientNumber = ++numberOfClients;
 
     public String clientUserName;
+    public int clientScore;
     private int numberOfSafeTeleportations;
     private int numberOfShortRangeAttacks;
 
@@ -39,6 +40,7 @@ public class CommunicationThread implements Runnable{
         out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
         this.clientUserName = in.readLine();
+        this.clientScore = 0;
 
 
         out.println("id;" + clientNumber + ";");
@@ -58,58 +60,78 @@ public class CommunicationThread implements Runnable{
 
     public void run()
     {
-            try
-            {
-                while(playerAlive) {
-                    if(GameEngine.GetGameStarted()) {
-                        if (PlayerTurnIndex != 0) {
-                            if (allClients.get(PlayerTurnIndex - 1).clientNumber == clientNumber) {
-                                try {
-                                    inline = in.readLine();
 
-
-                                        if (inline.equals("quit")) {
-                                            //Server.queue.put(new ComMessage("quit", this.clientNumber));
-                                            int index = 0;
-                                            for (CommunicationThread c: allClients
-                                                 ) {
-                                                if(c.clientNumber == this.clientNumber)
-                                                    break;
-                                                else
-                                                    index++;
-                                            }
-
-                                            DisconnectClient(index);
+            while(playerAlive) {
+                if (GameEngine.GetGameStarted()) {
+                    if (PlayerTurnIndex != 0) {
+                        try {
+                            inline = in.readLine();
+                            try {
+                                if (inline != null) {
+                                    if (inline.equals("quit")) {
+                                        Server.queue.put(new ComMessage("quit", this.clientNumber));
+                                    /*int index = 0;
+                                    for (CommunicationThread c: allClients
+                                         ) {
+                                        if(c.clientNumber == this.clientNumber)
                                             break;
+                                        else
+                                            index++;
+                                    }
 
-                                        }
+                                    DisconnectClient(index);
+                                    break;*/
+                                        break;
 
-                                        if (inline.equals("short range attack") && (numberOfShortRangeAttacks <= 0)) {
-                                            out.println("no sra");
-                                        } else if (inline.equals("safe teleport") && (numberOfSafeTeleportations <= 0)) {
-                                            out.println("no st");
-                                        } else {
-                                            Server.queue.put(new ComMessage(inline, clientNumber));
-                                        }
+                                    }
 
-
-                                } catch (InterruptedException e) {
-                                    LOGGER.info("Communication queue.put IO:error: " + e.getMessage());
+                                    if (inline.equals("short range attack") && (numberOfShortRangeAttacks <= 0)) {
+                                        out.println("no sra");
+                                    } else if (inline.equals("safe teleport") && (numberOfSafeTeleportations <= 0)) {
+                                        out.println("no st");
+                                    } else {
+                                        Server.queue.put(new ComMessage(inline, clientNumber));
+                                    }
                                 }
+                            } catch (InterruptedException e) {
+                                LOGGER.info("Could not put message in the server que: " + e.getMessage());
                             }
-                        } else {
-                            //ServerTurn
+                        } catch (IOException e) {
+                            LOGGER.info("Could not read from client/close socket: " + e.getMessage());
+
                         }
                     }
-
                 }
 
-            }
-            catch(IOException e)
-            {
-                LOGGER.info("Could not read from client/close socket: " + e.getMessage());
+                /*
+                else
+                {
+                    try{
+                        inline = in.readLine();
 
+                        try
+                        {
+                            if(inline != null) {
+                                if (inline.equals("quit"))
+                                    Server.queue.put(new ComMessage("quit", this.clientNumber));
+                            }
+                        }
+                        catch(InterruptedException e)
+                        {
+                            LOGGER.info("Could not put message in the server que: " + e.getMessage());
+                        }
+
+                    }
+                    catch(IOException e)
+                    {
+                        LOGGER.info("Could not read from client/close socket: " + e.getMessage());
+                    }
+
+
+                }
+                */
             }
+
     }
 
     public void PrintBoard() {
@@ -129,6 +151,126 @@ public class CommunicationThread implements Runnable{
     public int GetClientId()
     {
         return clientNumber;
+    }
+
+    public void SendMessageOnDeath(String ReasonForDeath)
+    {
+        ArrayList<HighscoreInfo> highScoreList = LoadHighScore();
+
+        if(highScoreList != null)
+        {
+            highScoreList.add(new HighscoreInfo(this.clientUserName, this.clientScore));
+            if(highScoreList.size() > 10)
+            {
+                Collections.sort(highScoreList, new Comparator<HighscoreInfo>(){
+                    @Override public int compare(HighscoreInfo h1, HighscoreInfo h2)
+                    {
+                        return h2.score - h1.score;
+                    }
+                });
+
+                highScoreList.remove(10);
+            }
+            else
+            {
+                Collections.sort(highScoreList, new Comparator<HighscoreInfo>(){
+                    @Override public int compare(HighscoreInfo h1, HighscoreInfo h2)
+                    {
+                        return h2.score - h1.score;
+                    }
+                });
+            }
+        }
+
+        String highscoreInfoLine = "";
+        for (HighscoreInfo hsi: highScoreList
+             ) {
+            highscoreInfoLine += (hsi.userName + ";" + hsi.score + ";");
+
+        }
+
+        out.println(ReasonForDeath + ";" + highscoreInfoLine);
+
+        SaveHighscore(highscoreInfoLine, highScoreList.size());
+
+
+    }
+
+    public ArrayList<HighscoreInfo> LoadHighScore()
+    {
+        ArrayList<HighscoreInfo> highScoreList = new ArrayList<HighscoreInfo>();
+        String fileName = "C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\highscore.txt";
+        String line = null;
+
+        try {
+            FileReader fileReader =
+                    new FileReader(fileName);
+
+            BufferedReader bufferedReader =
+                    new BufferedReader(fileReader);
+
+            while((line = bufferedReader.readLine()) != null) {
+                String[] splitLine = line.split(";");
+                HighscoreInfo hsi = new HighscoreInfo(splitLine[0], Integer.valueOf(splitLine[1]));
+                highScoreList.add(hsi);
+
+            }
+
+
+            bufferedReader.close();
+
+            Collections.sort(highScoreList, new Comparator<HighscoreInfo>(){
+                @Override public int compare(HighscoreInfo h1, HighscoreInfo h2)
+                {
+                    return h2.score - h1.score;
+                }
+            });
+
+            return highScoreList;
+
+
+        }
+        catch(FileNotFoundException ex) {
+            LOGGER.info(
+                    "Unable to open file '" +
+                            fileName + "'\n");
+            return null;
+        }
+        catch(IOException ex) {
+            LOGGER.info(
+                    "Error reading file '"
+                            + fileName + "'\n");
+            return  null;
+        }
+    }
+
+
+    public void SaveHighscore(String highscoreInfoLine, int highscoreLength)
+    {
+        String fileName = "C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\highscore.txt";
+        try {
+            FileWriter fileWriter =
+                    new FileWriter(fileName);
+
+            BufferedWriter bufferedWriter =
+                    new BufferedWriter(fileWriter);
+
+            String[] splitLine = highscoreInfoLine.split(";");
+
+            for (int i = 0; i < highscoreLength * 2; i += 2) {
+                 bufferedWriter.write(splitLine[i] + ";" + splitLine[i+1] + ";" + "\n");
+            }
+
+
+            bufferedWriter.close();
+        }
+        catch(IOException ex) {
+            LOGGER.info(
+                    "Error writing to file '"
+                            + fileName + "'\n");
+
+        }
+
     }
 
     public static void PrintBoardForAllClients()
@@ -179,14 +321,25 @@ public class CommunicationThread implements Runnable{
             {
                 try
                 {
-                    SCC.out.println("killed");
+                    int index = allClients.indexOf(SCC);
+                    //if removing client last in list, and it's their turn then its the computers turn
+                    if((index == allClients.size() - 1) && (GetPlayerTurn() - 1 == index))
+                    {
+                        NextPlayerTurn();
+                    }
+                    else if(GetPlayerTurn() - 1 > index)
+                    {
+                        DecreasePlayerTurn();
+                    }
+
+                    SCC.SendMessageOnDeath("killed");
                     SCC.socket.close();
                     SCC.in.close();
                     SCC.out.close();
                     allClients.remove(SCC);
                     numberOfClients = allClients.size();
                     SCC.playerAlive = false;
-                    if(!allClients.isEmpty())
+                    if(!allClients.isEmpty() && (CommunicationThread.GetPlayerTurn() > 0))
                         CommunicationThread.SendToClients("levelinfo;" + GameEngine.Round + ";" + GameEngine.Level + ";" + CommunicationThread.GetAllClients().get(CommunicationThread.GetPlayerTurn() - 1).GetClientId() + ";");
                     break;
                 }
@@ -206,8 +359,16 @@ public class CommunicationThread implements Runnable{
             CommunicationThread SCC = allClients.get(index);
             try
             {
+                if(GameEngine.GetGameStarted()) {
+                    //if removing client last in list, and it's their turn then its the computers turn
+                    if ((index == allClients.size() - 1) && (GetPlayerTurn() - 1 == index)) {
+                        NextPlayerTurn();
+                    } else if (GetPlayerTurn() - 1 > index) {
+                        DecreasePlayerTurn();
+                    }
+                }
                 int clientID = allClients.get(index).GetClientId();
-                SCC.out.println("disconnected");
+                SCC.SendMessageOnDeath("disconnected");
                 SCC.socket.close();
                 SCC.in.close();
                 SCC.out.close();
@@ -375,6 +536,39 @@ public class CommunicationThread implements Runnable{
             SCC.out.println("id;" + SCC.clientNumber + ";");
 
         }
+    }
+
+    public static synchronized void DecreasePlayerTurn()
+    {
+        PlayerTurnIndex--;
+    }
+
+    public static synchronized void IncreaseScoreOfClient(int ClientID, int scoreIncrement)
+    {
+        for (CommunicationThread CT: allClients
+             ) {
+            if(CT.GetClientId() == ClientID)
+            {
+                CT.clientScore += scoreIncrement;
+            }
+        }
+    }
+
+    public static synchronized  int GetClientIndex(int ClientId)
+    {
+        int index = 0;
+        for (CommunicationThread CT: allClients
+             ) {
+            if(CT.GetClientId() == ClientId)
+            {
+                return index;
+            }
+            else
+            {
+                index++;
+            }
+        }
+        return index;
     }
 
 

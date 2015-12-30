@@ -1,13 +1,19 @@
 package tobdyh131;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 
 import javax.naming.ldap.Control;
-import javax.swing.text.html.ListView;
 import java.awt.event.ActionEvent;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Observable;
 import java.util.ResourceBundle;
 
 /**
@@ -17,14 +23,17 @@ public class HighscoreController implements Initializable, ControlledScreen{
 
     ScreensController myController;
 
-    @FXML
-    public ListView highScore;
+    ObservableList<HighscoreInfo> highscoreList = FXCollections.observableArrayList();
 
     @FXML
-    public Button dismiss;
+    private ListView highScore;
+
 
     @FXML
-    public void handleDismiss(ActionEvent event)
+    private Button dismiss;
+
+    @FXML
+    public void handleDismiss()
     {
         myController.loadScreen("clientConnect", "ClientConnectScene.fxml");
         myController.setScreen("clientConnect");
@@ -38,5 +47,10 @@ public class HighscoreController implements Initializable, ControlledScreen{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        Platform.runLater(()->{
+            highScore.setItems(FXCollections.observableArrayList(highscoreList));
+
+        });
     }
+
 }

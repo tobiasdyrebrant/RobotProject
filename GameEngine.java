@@ -85,8 +85,8 @@ public class GameEngine implements Runnable {
                         int position[] = RandomPosition();
                         Board[position[0]][position[1]] = msg.ClientId;
                     } else if (msg.Message.equals("quit")) {
-                        DisconnectClient(msg.ClientId);
                         ((ServerPlayingController) controller).RemoveFromScoreBoard(msg.ClientId);
+                        DisconnectClient(msg.ClientId);
                         ((ServerPlayingController) controller).WriteToTextArea("Client " + msg.ClientId + " disconnected");
                     } else if (IsMoveCommand(msg.Message)) {
                         if (CanMoveToPosition(msg.Message, msg.ClientId)) {
@@ -567,6 +567,9 @@ public class GameEngine implements Runnable {
         CommunicationThread.IncreaseNumberOfSafeTeleportations(ClientIndex, numberOfRobotsKilled);
 
         ((ServerPlayingController) controller).IncreasePointsOfPlayer(CommunicationThread.GetClientUserName(ClientIndex), numberOfRobotsKilled);
+        CommunicationThread.IncreaseScoreOfClient(ClientIndex, numberOfRobotsKilled);
+
+
 
 
     }
@@ -665,6 +668,7 @@ public class GameEngine implements Runnable {
              ) {
 
             ((ServerPlayingController) controller).IncreasePointsOfPlayer(CT.clientUserName, 5);
+            CommunicationThread.IncreaseScoreOfClient(CT.GetClientId(), 5);
         }
 
     }
@@ -876,10 +880,11 @@ public class GameEngine implements Runnable {
             }
         }
 
-        if(!CommunicationThread.GetAllClients().isEmpty()) {
+        if(!CommunicationThread.GetAllClients().isEmpty() && (CommunicationThread.GetPlayerTurn() > 0)) {
             CommunicationThread.SendToClients("levelinfo;" + Round + ";" + Level + ";" + CommunicationThread.GetAllClients().get(CommunicationThread.GetPlayerTurn() - 1).GetClientId() + ";");
-            CommunicationThread.SendUpdatedBoardToClients(Board);
         }
+
+        CommunicationThread.SendUpdatedBoardToClients(Board);
     }
 
 
