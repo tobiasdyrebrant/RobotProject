@@ -19,6 +19,9 @@ import java.util.HashMap;
 
 /**
  * Created by Tobias on 2015-12-23.
+ *
+ * This is the class the controls the screens to be shown (the GUI).
+ * Handles loading screens and switching between them.
  */
 public class ScreensController extends StackPane {
 
@@ -35,6 +38,13 @@ public class ScreensController extends StackPane {
     }
 
 
+    /**
+     * Loads a screen.
+     * @param name Name of the screen.
+     * @param resource Which resource to be loaded.
+     * @param c The client to be passed to the controller.
+     * @return True if succeeded, false if not.
+     */
     public boolean loadScreen(String name, String resource, Client c) {
         try {
             FXMLLoader myLoader = new
@@ -54,6 +64,13 @@ public class ScreensController extends StackPane {
         }
     }
 
+    /**
+     * Loads a screen.
+     * @param name Name of the screen.
+     * @param resource Which resource to be loaded.
+     * @param s The server to be passed to the controller.
+     * @return True if succeeded, false if not.
+     */
     public boolean loadScreen(String name, String resource, Server s) {
         try {
             FXMLLoader myLoader = new
@@ -75,6 +92,13 @@ public class ScreensController extends StackPane {
         }
     }
 
+    /**
+     * Loads a screen.
+     * @param name Name of the screen.
+     * @param resource Which resource to be loaded.
+     * @param s The server settings to be passed to the controller.
+     * @return True if succeeded, false if not.
+     */
     public boolean loadScreen(String name, String resource, ServerSettings s) {
         try {
             FXMLLoader myLoader = new
@@ -94,6 +118,13 @@ public class ScreensController extends StackPane {
         }
     }
 
+    /**
+     * Loads a screen.
+     * @param name Name of the screen.
+     * @param resource Which resource to be loaded.
+     * @param ConsecutiveRound If true, then load settings from previous session. If false, don't.
+     * @return True if succeeded, false if not.
+     */
     public boolean loadScreen(String name, String resource, boolean ConsecutiveRound) {
         try {
             FXMLLoader myLoader = new
@@ -116,6 +147,13 @@ public class ScreensController extends StackPane {
         }
     }
 
+    /**
+     * Loads a screen.
+     * @param name Name of the screen.
+     * @param resource Which resource to be loaded.
+     * @param highscoreList The high score list to be passed to the controller.
+     * @return True if succeeded, false if not.
+     */
     public boolean loadScreen(String name, String resource, ObservableList<HighscoreInfo> highscoreList) {
         try {
             FXMLLoader myLoader = new
@@ -135,6 +173,12 @@ public class ScreensController extends StackPane {
         }
     }
 
+    /**
+     * Loads a screen.
+     * @param name Name of the screen.
+     * @param resource Which resource to be loaded.
+     * @return True if succeeded, false if not.
+     */
     public boolean loadScreen(String name, String resource) {
         try {
             FXMLLoader myLoader = new
@@ -151,6 +195,11 @@ public class ScreensController extends StackPane {
         }
     }
 
+    /**
+     * Sets which screen to be shown.
+     * @param name Name of the screen to be shown.
+     * @return True if succeded, false if not.
+     */
     public boolean setScreen(final String name) {
 
         if (screens.get(name) != null) { //screen loaded
@@ -176,6 +225,11 @@ public class ScreensController extends StackPane {
         return false;
     }
 
+    /**
+     * Unloads a certain scene.
+     * @param name Name of the screen to be unloaded.
+     * @return True if succeded, false it not.
+     */
     public boolean unloadScreen(String name) {
         if(screens.remove(name) == null) {
             System.out.println("Screen didn't exist");

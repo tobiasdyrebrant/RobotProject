@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 /**
  * Created by Tobias on 2015-11-24.
+ *
+ * A class that listens to the server, receives the messages the server is sending, and the passes it to the client.
  */
 public class ServerListener extends Thread {
     final private BufferedReader fromServer;
@@ -22,12 +24,21 @@ public class ServerListener extends Thread {
     private boolean ClientConnected = true;
 
 
+    /**
+     * The constructor that creates the server listener based on the arguments.
+     * @param fromServer Buffered reader from the server.
+     * @param controller he controller of the GUI which is displayed for the client during playing.
+     */
     public ServerListener(BufferedReader fromServer, Object controller)
     {
         this.fromServer = fromServer;
         this.controller = controller;
     }
 
+    /**
+     * The function which is continuously executed during runtime.
+     * If the client is connected to the server, it reads from the server and handles the message.
+     */
     public void run()
     {
         String lineFromServer;

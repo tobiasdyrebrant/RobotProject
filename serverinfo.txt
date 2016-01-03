@@ -1,0 +1,17 @@
+height;5;
+width;5;
+numberOfPlayersBeforeStart;1;
+numberOfRoundsPerLevel;5;
+numberOfRobots;0;
+increaseOfRobotsPerLevel;1;
+robotsMergeOnCollision;true;
+numberOfRubbles;4;
+changeOfRubblesPerLevel;1;
+numberOfSafeTeleportationsAwardedPerKill;1;
+numberOfSafeTeleportationsAwardedPerLevel;1;
+numberOfShortRangeAttacksAwardedPerLevel;2;
+robotsLockToTarget;false;
+shortRangeAttacksKillsAllAdjacentRobots;true;
+robotPerceptionRowRange;3;
+robotPerceptionColumnRange;3;
+port;1111;

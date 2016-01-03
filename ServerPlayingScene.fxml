@@ -12,8 +12,6 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="590.0" prefWidth="813.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tobdyh131.ServerPlayingController">
    <children>
-      <GridPane fx:id="gridPane" gridLinesVisible="true" layoutX="14.0" layoutY="23.0" prefHeight="556.0" prefWidth="559.0">
-      </GridPane>
       <TextArea fx:id="consoleOutput" editable="false" layoutX="599.0" layoutY="317.0" prefHeight="179.0" prefWidth="200.0" />
       <Button layoutX="599.0" layoutY="505.0" mnemonicParsing="false" onAction="#handleDisconnectSelectedPlayer" prefHeight="57.0" prefWidth="200.0" text="Disconnect selected client" />
       <ListView fx:id="scoreBoardView" layoutX="599.0" layoutY="39.0" prefHeight="253.0" prefWidth="200.0" />
@@ -21,5 +19,13 @@
       <Text fx:id="Round" layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Round: " wrappingWidth="51.74609375" />
       <Text fx:id="Level" layoutX="73.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Level: " wrappingWidth="51.74609375" />
       <Text fx:id="PlayerTurn" layoutX="125.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player number 1's turn" />
+      <GridPane fx:id="gridPane" gridLinesVisible="true" layoutX="14.0" layoutY="23.0" prefHeight="556.0" prefWidth="559.0">
+         <columnConstraints>
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+         </rowConstraints>
+      </GridPane>
    </children>
 </AnchorPane>

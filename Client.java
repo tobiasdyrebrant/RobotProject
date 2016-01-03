@@ -20,6 +20,9 @@ import java.util.logging.Logger;
 
 /**
  * Created by Tobias on 2015-11-27.
+ *
+ * This is the Client, its main purpose is to pass messages from the user
+ * through the socket where the message is received and handled.
  */
 public class Client extends Application implements Runnable{
     private static Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
@@ -35,6 +38,9 @@ public class Client extends Application implements Runnable{
 
     private boolean Connected = true;
 
+
+    //TODO
+    //Ta bort eventuellt....
     public static void main(String[] args) {
         LOGGER.setLevel(Level.OFF);
 
@@ -71,8 +77,12 @@ public class Client extends Application implements Runnable{
 
     }
 
-    //TODO
-    //Spara på disk
+    /**
+     * Constructor that creates the client based on the 3 input arguments.
+     * @param ip The ip address used for connecting to the socket
+     * @param port The port used for connection to the socket
+     * @param UserName The client's username
+     */
     public Client(InetAddress ip, int port, String UserName)
     {
         try {
@@ -92,6 +102,11 @@ public class Client extends Application implements Runnable{
     }
 
 
+    /**
+     * The function which is continuously executed during runtime.
+     * It checks for messages in the queue (which receives messages from user input via the GUI)
+     * and then passes it through the socket.
+     */
     public void run()
     {
         while(Connected)
@@ -116,6 +131,9 @@ public class Client extends Application implements Runnable{
         }
     }
 
+    /**
+     * A method to cancel the run-method before to terminate this thread.
+     */
     public void disconnectClient()
     {
         Connected = false;

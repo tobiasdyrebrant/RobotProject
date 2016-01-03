@@ -12,6 +12,9 @@ import java.util.logging.SimpleFormatter;
 
 /**
  * Created by Tobias on 2015-11-24.
+ *
+ * This class is all about connections made by clients. It waits for a connection to occur
+ * and then it creates a communication thread based on that connection/socket.
  */
 public class ServerConnectionThread implements Runnable {
     private static Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
@@ -23,6 +26,11 @@ public class ServerConnectionThread implements Runnable {
 
     private boolean waitingForConnections = true;
 
+    /**
+     * The constructor that creates the connection thread based on the arguments.
+     * @param PORT The port which the server socket is created with.
+     * @param controller The controller which controls the server GUI during the connection phase.
+     */
     public ServerConnectionThread(int PORT, Object controller) {
         try {
             //LOGGER.setLevel(Level.OFF);
@@ -43,7 +51,11 @@ public class ServerConnectionThread implements Runnable {
 
     }
 
-
+    /**
+     * The function which is continuously executed during runtime.
+     * If the server is waiting for connections and the game has not yet started, it waits for connections.
+     * When a connection occurs, it creates a communication thread based on the socket, and starts the thread.
+     */
     public void run() {
         try {
             while (waitingForConnections) {
@@ -60,15 +72,17 @@ public class ServerConnectionThread implements Runnable {
 
                                 CommunicationThread SCC = new CommunicationThread(socket);
                                 Thread t = new Thread(SCC);
-                                t.setName("Communiation Thread");
+                                t.setName("Communication Thread");
                                 t.start();
 
-                                Platform.runLater(()-> {
+                                Platform.runLater(() -> {
                                     ((ServerDuringConnectionController) controller).listOfPlayers.add(SCC.clientUserName);
                                 });
 
 
                                 LOGGER.info("New communication thread started.");
+
+
                             }
                             else
                             {
@@ -99,6 +113,10 @@ public class ServerConnectionThread implements Runnable {
         }
     }
 
+    /**
+     * A method which makes the server stop waitinf for connectos.
+     * Terminates this class.
+     */
     public void CloseConnectionThread()
     {
         waitingForConnections = false;

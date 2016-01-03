@@ -5,19 +5,21 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -26,6 +28,9 @@ import java.util.TimerTask;
 
 /**
  * Created by Tobias on 2015-12-22.
+ *
+ * A controller for the users GUI while playing.
+ * This class reacts and handles events on the users side while the game is running.
  */
 public class ClientPlayingController implements Initializable, ControlledScreen{
 
@@ -39,7 +44,14 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
 
     public int Board[][];
 
+    public Timer timer;
+
     boolean DoingTurn = false;
+
+    private float rowHeight;
+    private float colWidth;
+    private int height;
+    private int width;
 
     @FXML
     private GridPane gridPane;
@@ -84,6 +96,11 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
     private Text ClientId;
 
 
+    /**
+     * Its called when a key is pressed, and then calls the proper
+     * method depending on what key is pressed.
+     * @param e A key event
+     */
     @FXML
     public void handleKeyPress(KeyEvent e)
     {
@@ -129,9 +146,9 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
     }
 
-
-    //TODO
-    //Fixa så att man skicka enum istället
+    /**
+     * Called when the user wants to move right.
+     */
     @FXML
     public void handleMoveRight()
     {
@@ -151,10 +168,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to move up right (Diagonal)
+     */
     @FXML
     public void handleMoveUpRight()
     {
@@ -173,10 +193,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to move down right (Diagonal)
+     */
     @FXML
     public void handleMoveDownRight()
     {
@@ -195,10 +218,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to move left.
+     */
     @FXML
     public void handleMoveLeft()
     {
@@ -217,10 +243,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to move up left (Diagonal)
+     */
     @FXML
     public void handleMoveUpLeft()
     {
@@ -239,10 +268,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to move down left (Diagonal).
+     */
     @FXML
     public void handleMoveDownLeft()
     {
@@ -261,10 +293,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to move down.
+     */
     @FXML
     public void handleMoveDown()
     {
@@ -283,10 +318,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to move up.
+     */
     @FXML
     public void handleMoveUp()
     {
@@ -305,10 +343,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to perform a random teleport.
+     */
     @FXML
     public void handleRandomTeleport()
     {
@@ -327,10 +368,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to perform a safe teleport.
+     */
     @FXML
     public void handleSafeTeleport()
     {
@@ -350,10 +394,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to perform a short range attack.
+     */
     @FXML
     public void handleShortRangeAttack()
     {
@@ -372,10 +419,14 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Called when the user wants to wait or when the time for moving
+     * is over.
+     */
     @FXML
     public void handleWait()
     {
@@ -394,12 +445,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
-    //TODO
-    //Byt scen? Highscore?
+    /**
+     * Called when the user wants to disconnect from the game.
+     */
     @FXML
     public void handleDisconnect()
     {
@@ -410,11 +462,15 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(InterruptedException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
-
+    /**
+     * This is called when the game is over for the user, whether it got killed or disconnected.
+     * It switches scene to the High Score Scene which shows the current high score list.
+     * @param highscoreList A list of the users whom scored the ten highest points.
+     */
     @FXML
     public void showHighScoreScene(ObservableList<HighscoreInfo> highscoreList)
     {
@@ -426,8 +482,6 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
                timer.purge();
            }
 
-           //TODO
-           //Fixa highscore här
 
            myController.loadScreen("highscoreScene", "HighscoreScene.fxml", highscoreList);
            myController.setScreen("highscoreScene");
@@ -435,7 +489,11 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
        });
     }
 
-
+    /**
+     * Initialize function of the controller which is called absolutely first.
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         gridPane.getRowConstraints().removeAll(new RowConstraints());
@@ -452,11 +510,20 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
 
     }
 
+    /**
+     * Creates the board based on the two parameters.
+     * @param height Height of the board
+     * @param width Width of the board
+     */
     public void CreateBoard(int height, int width ){
         Platform.runLater(()->{
             Board = new int[height][width];
-            float rowHeight = (((float)height)/559)*1000;
-            float colWidth = (((float)width)/556)*1000;
+
+            this.height = height;
+            this.width = width;
+
+            rowHeight = (((float)height)/559)*1000;
+            colWidth = (((float)width)/556)*1000;
             for(int i = 0; i < height; i++)
             {
                 RowConstraints row = new RowConstraints();
@@ -473,14 +540,13 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
             gridPane.setGridLinesVisible(true);
             gridPane.setVisible(true);
 
-
-
-
         });
     }
 
-    //TODO
-    // fixa så att den visar bilder istället för siffror
+    /**
+     * Updates the board for the user when a change is made.
+     * @param Board The updated version of the board.
+     */
     public void UpdateBoard(int[][] Board)
     {
         Platform.runLater(()-> {
@@ -490,16 +556,89 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
 
             for (int i = 1; i <= Board[0].length; i++) {
                 for (int j = 1; j <= Board[1].length; j++) {
-                    Text object = new Text("" + Board[i - 1][j - 1]);
-                    gridPane.add(object, j, i);
+
+
+
+                    if(Board[i - 1][j - 1] < -1) {
+                        gridPane.add(LoadPicture("Robot.png"), j, i);
+                    }
+                    else if(Board[i - 1][j - 1] == -1)
+                    {
+                        gridPane.add(LoadPicture("Obstacle.jpg"), j, i);
+                    }
+                    else if(Board[i - 1][j - 1] > 0)
+                    {
+                        gridPane.add(LoadPlayerImage(Board[i - 1][j - 1]), j, i);
+                    }
+                    else if(Board[i - 1][j - 1]  == 0)
+                    {
+                        Text empty = new Text("");
+                        gridPane.add(empty, j, i);
+                    }
+
                 }
             }
         });
     }
 
-    public Timer timer;
+    /**
+     * Loads the correct picture of the player to display on the board
+     * @param clientID The users id so the right picture is chosen
+     * @return An Image View which is used on the board.
+     */
+    public ImageView LoadPlayerImage(int clientID)
+    {
+        try
+        {
+            File file = new File(getClass().getResource("player" + clientID + ".png").toURI());
+            Image image = new Image("file:" + file.toString());
+            ImageView pic = new ImageView();
+            pic.setImage(image);
+            pic.setFitHeight((gridPane.getPrefHeight() / gridPane.getRowConstraints().size()) / 1.1);
+            pic.setFitWidth((gridPane.getPrefWidth() / gridPane.getColumnConstraints().size()) / 1.1);
+            return pic;
+        }
+        catch(URISyntaxException e)
+        {
+            System.out.println(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Loads a picture of either a robot or a obstacle depending on the argument.
+     * @param fileName The name of the file to be loaded
+     * @return An Image View which is used on the board.
+     */
+    public ImageView LoadPicture(String fileName)
+    {
+        try
+        {
+            File file = new File(getClass().getResource(fileName).toURI());
+            Image image = new Image("file:" + file.toString());
+            ImageView pic = new ImageView();
+            pic.setImage(image);
+            pic.setFitHeight((gridPane.getPrefHeight() / gridPane.getRowConstraints().size()) / 1.1);
+            pic.setFitWidth((gridPane.getPrefWidth() / gridPane.getColumnConstraints().size()) / 1.1);
+            return pic;
+        }
+        catch(URISyntaxException e)
+        {
+            System.out.println(e);
+        }
+
+        return null;
+    }
 
 
+    /**
+     * Sets the level information for the user at the current time.
+     * And if it's the users turn, starts a timer for the user to make a move.
+     * @param Round The current round
+     * @param Level The current level
+     * @param PlayerTurn Which player who's turn it is to move
+     */
     public void SetLevelInformation(int Round, int Level, int PlayerTurn)
     {
         Platform.runLater(()-> {
@@ -541,11 +680,19 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         });
     }
 
+    /**
+     * Sets the screen parent for the controller.
+     * @param screenParent
+     */
     @Override
     public void setScreenParent(ScreensController screenParent) {
         myController = screenParent;
     }
 
+    /**
+     * Writes a message to the text area so the user can see.
+     * @param msg The message to write.
+     */
     public void WriteToTextArea(String msg)
     {
         consoleOutput.appendText(msg + "\n");

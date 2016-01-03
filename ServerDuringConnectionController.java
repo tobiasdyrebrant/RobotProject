@@ -15,6 +15,9 @@ import java.util.ResourceBundle;
 
 /**
  * Created by Tobias on 2015-12-23.
+ *
+ * A controller for the servers connection GUI .
+ * This class reacts and handles events that occur during the connection phase.
  */
 public class ServerDuringConnectionController implements Initializable, ControlledScreen{
 
@@ -38,6 +41,10 @@ public class ServerDuringConnectionController implements Initializable, Controll
     @FXML
     private Button startGame;
 
+    /**
+     * If the admin wants to disconnect a certain player,
+     * this method is called.
+     */
     @FXML
     public void handleDisconnectPlayer()
     {
@@ -51,6 +58,7 @@ public class ServerDuringConnectionController implements Initializable, Controll
 
     }
 
+    //TODO
     //Client disconnected during connection time
     public void playerDisconnected(int ClientID)
     {
@@ -60,6 +68,10 @@ public class ServerDuringConnectionController implements Initializable, Controll
         CommunicationThread.ResetClientNumbers();
     }
 
+    /**
+     * If enough clients are connected and the admin decides to
+     * start the game, this method is called.
+     */
     @FXML
     public void handleStartGame()
     {
@@ -80,8 +92,10 @@ public class ServerDuringConnectionController implements Initializable, Controll
 
     }
 
-
-
+    /**
+     * This method makes the server start waiting for connections,
+     * so clients can connect to the server.
+     */
     public void startWaitingForConnections()
     {
         SCT = new ServerConnectionThread(server.GetServerSettings().port, this);
@@ -99,11 +113,20 @@ public class ServerDuringConnectionController implements Initializable, Controll
 
     }
 
+    /**
+     * Sets the screenParent for the controller
+     * @param screenParent
+     */
     @Override
     public void setScreenParent(ScreensController screenParent) {
         myController = screenParent;
     }
 
+    /**
+     * Initialize function of the controller which is called absolutely first.
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }

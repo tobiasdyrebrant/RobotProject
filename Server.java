@@ -13,6 +13,9 @@ import java.util.logging.Logger;
 
 /**
  * Created by Tobias on 2015-11-27.
+ *
+ * This is the Server. Its main purpose is to receive messages from the communication threads,
+ * and pass the further to the game engine which then handles these messages.
  */
 public class Server extends Application implements Runnable {
     private static Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
@@ -28,12 +31,10 @@ public class Server extends Application implements Runnable {
     public Object controller;
 
     //TODO
-    //HIGHSCORELIST
-    //Läs från en fil med hela listen, och sen så skicka genom en sträng hela skiten liknande allt annat.
-
-    //TODO
     //Skall en client kunna disconnecta under connect scenen så fixa det.
 
+    //TODO
+    //Ta bort?...
     public static void main(String[] args) {
         launch();
     }
@@ -57,9 +58,11 @@ public class Server extends Application implements Runnable {
     {
 
     }
-    // Skapar en servertråd som lyssnar efter connections
-    // Skapar en tråd som hanterar logiken
-    // Skaper en tråd som kommunicerar
+
+    /**
+     * The constructor that creates the server based on the settings.
+     * @param s Settings of the game.
+     */
     public Server(ServerSettings s)
     {
         Settings = new ServerSettings();
@@ -89,7 +92,11 @@ public class Server extends Application implements Runnable {
 
     }
 
-
+    /**
+     * The function which is continuously executed during runtime.
+     * If the session and game has started, it checks for messages in the queue (which receives messages from the communication threads)
+     * and then passes it to the game engine.
+     */
     public void run() {
         while(GameEngine.GetSessionOnGoing())
         {

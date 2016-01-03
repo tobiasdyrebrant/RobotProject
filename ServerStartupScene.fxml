@@ -24,7 +24,7 @@
       <Text layoutX="77.0" layoutY="244.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Robots " wrappingWidth="90.13671875" />
       <Text layoutX="77.0" layoutY="279.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Robots increase per level" wrappingWidth="136.13671875" />
       <Text layoutX="393.0" layoutY="279.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Robot row perception range" wrappingWidth="160.0" />
-      <Text layoutX="392.0" layoutY="244.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Short range attackes per level" wrappingWidth="161.13671875" />
+      <Text layoutX="392.0" layoutY="244.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Short range attacks per level" wrappingWidth="161.13671875" />
       <Text layoutX="392.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Safe teleportations per level" wrappingWidth="161.13671875" />
       <Text layoutX="391.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Safe teleportations awarded per kill" wrappingWidth="204.13671875" />
       <TextField fx:id="numberOfRubbles" layoutX="588.0" layoutY="87.0" text="4" />

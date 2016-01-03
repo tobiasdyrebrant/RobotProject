@@ -7,6 +7,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Tobias on 2015-11-27.
+ *
+ * This is the class that handles all the logic behind the game.
+ * Controls everything that happens on the board, if a player or computer moves,
+ * if a level or round is over etc.
  */
 public class GameEngine implements Runnable {
     public static BlockingQueue<ComMessage> queue = new LinkedBlockingQueue<>();
@@ -29,6 +33,12 @@ public class GameEngine implements Runnable {
     // -1> = Robots
 
     private ServerSettings Settings;
+
+    /**
+     * The constructor that "creates the game".
+     * @param s Settings of the game.
+     * @param controller The controller of the GUI which is displayed for the server/admin during playing.
+     */
     public GameEngine(ServerSettings s, Object controller)
     {
         this.controller = controller;
@@ -41,6 +51,10 @@ public class GameEngine implements Runnable {
 
     }
 
+    /**
+     * Creates a new level.
+     * @param s Settings of the current level.
+     */
     private void CreateLevel(ServerSettings s)
     {
         Settings = s;
@@ -67,12 +81,16 @@ public class GameEngine implements Runnable {
     }
 
 
+    /**
+     * The function which is continuously executed during runtime.
+     * If the game is started, first checks if there's players alive, if not then it terminates.
+     * But if there's players alive it keeps checking the queue for incoming messages, and if a message
+     * has arrived it does the correct action based on what information it has received.
+     */
     public void run()
     {
 
             while (gameStarted) {
-                //TODO
-                //controllern går tillbaka till main screen osv.
                 if(CommunicationThread.GetAllClients().isEmpty())
                 {
                     ((ServerPlayingController) controller).GoToStartup();
@@ -152,7 +170,6 @@ public class GameEngine implements Runnable {
                         ((ServerPlayingController) controller).UpdateBoard(Board);
                     }
 
-                    CommunicationThread.ResetDeadlines();
 
                 }
 
@@ -164,40 +181,47 @@ public class GameEngine implements Runnable {
 
     }
 
-    private void Move(int ClientIndex, String msg)
+    /**
+     * This method moves a client based on the arguments.
+     * @param ClientId Id of the client to be moved.
+     * @param msg The "move message", that is, what move is to be performed.
+     */
+    private void Move(int ClientId, String msg)
     {
-        int[] currentPosition = GetClientOrRobotPosition(ClientIndex);
+        int[] currentPosition = GetClientOrRobotPosition(ClientId);
         Board[currentPosition[0]][currentPosition[1]] = 0;
 
         switch(msg){
-            case "move right":  Board[currentPosition[0]][currentPosition[1] + 1] = ClientIndex;
-                                ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientIndex + " moved right");
+            case "move right":  Board[currentPosition[0]][currentPosition[1] + 1] = ClientId;
+                                ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientId + " moved right");
                                 break;
-            case "move left":   Board[currentPosition[0]][currentPosition[1] - 1] = ClientIndex;
-                                ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientIndex + " moved left");
+            case "move left":   Board[currentPosition[0]][currentPosition[1] - 1] = ClientId;
+                                ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientId + " moved left");
                                 break;
-            case "move up":     Board[currentPosition[0] - 1][currentPosition[1]] = ClientIndex;
-                                ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientIndex + " moved up");
+            case "move up":     Board[currentPosition[0] - 1][currentPosition[1]] = ClientId;
+                                ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientId + " moved up");
                                 break;
-            case "move down":   Board[currentPosition[0] + 1][currentPosition[1]] = ClientIndex;
-                                ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientIndex + " moved down");
+            case "move down":   Board[currentPosition[0] + 1][currentPosition[1]] = ClientId;
+                                ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientId + " moved down");
                                 break;
-            case "move up right":   Board[currentPosition[0] - 1][currentPosition[1] + 1] = ClientIndex;
-                                    ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientIndex + " moved up right");
+            case "move up right":   Board[currentPosition[0] - 1][currentPosition[1] + 1] = ClientId;
+                                    ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientId + " moved up right");
                                     break;
-            case "move down right": Board[currentPosition[0] + 1][currentPosition[1] + 1] = ClientIndex;
-                                    ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientIndex + " down up");
+            case "move down right": Board[currentPosition[0] + 1][currentPosition[1] + 1] = ClientId;
+                                    ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientId + " down up");
                                     break;
-            case "move up left":    Board[currentPosition[0] - 1][currentPosition[1] - 1] = ClientIndex;
-                                    ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientIndex + " moved up left");
+            case "move up left":    Board[currentPosition[0] - 1][currentPosition[1] - 1] = ClientId;
+                                    ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientId + " moved up left");
                                     break;
-            case "move down left":  Board[currentPosition[0] + 1][currentPosition[1] - 1] = ClientIndex;
-                                    ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientIndex + " moved down left");
+            case "move down left":  Board[currentPosition[0] + 1][currentPosition[1] - 1] = ClientId;
+                                    ((ServerPlayingController) controller).WriteToTextArea("Client " + ClientId + " moved down left");
                                     break;
         }
     }
 
-
+    /**
+     * Moves all the robots to their current closest client.
+     */
     private void MoveRobotsToClosestClient()
     {
 
@@ -293,6 +317,9 @@ public class GameEngine implements Runnable {
         }
     }
 
+    /**
+     * Moves all robots to their given target client.
+     */
     private void MoveRobotsToTarget()
     {
         for(Robot r : robotList) {
@@ -316,6 +343,13 @@ public class GameEngine implements Runnable {
 
     }
 
+    /**
+     * Checks where all the robots has moved, and does the correct actions based
+     * on what's on their new position on the board. If it's a client on their new position,
+     * they kill that client, if it's a piece of rubble the robot dies, if there's another robot
+     * on that position they either merge or become a rubble (depending on the server settings), or if
+     * it's empty then nothing happens.
+     */
     private void CheckAndUpdateWhereRobotsMoved()
     {
         boolean LastChecked = false;
@@ -405,6 +439,9 @@ public class GameEngine implements Runnable {
         }
     }
 
+    /**
+     * Assign all the robots to clients to chase.
+     */
     private void AssignRobotsToClients()
     {
         List<CommunicationThread> allClients = CommunicationThread.GetAllClients();
@@ -427,6 +464,10 @@ public class GameEngine implements Runnable {
 
     }
 
+    /**
+     *
+     * @return The id of the client whom got the least number of robots chasing it.
+     */
     private int GetClientIdWithLeastLocks()
     {
         List<ClientToLocksEntry> CTLE = new ArrayList<ClientToLocksEntry>();
@@ -462,6 +503,10 @@ public class GameEngine implements Runnable {
 
     }
 
+    /**
+     * Disconnects a certain client.
+     * @param ClientId Id of the client to disconnect.
+     */
     private void DisconnectClient(int ClientId)
     {
         int[] position = GetClientOrRobotPosition(ClientId);
@@ -477,9 +522,13 @@ public class GameEngine implements Runnable {
 
     }
 
-    private void RandomTeleport(int ClientIndex)
+    /**
+     * Performs a random teleport of a specific client.
+     * @param ClientId Id of the client.
+     */
+    private void RandomTeleport(int ClientId)
     {
-        int currentPosition[] = GetClientOrRobotPosition(ClientIndex);
+        int currentPosition[] = GetClientOrRobotPosition(ClientId);
         Board[currentPosition[0]][currentPosition[1]] = 0;
         int nextPosition[] = RandomPosition();
 
@@ -487,12 +536,16 @@ public class GameEngine implements Runnable {
             nextPosition = RandomPosition();
         }
 
-        Board[nextPosition[0]][nextPosition[1]] = ClientIndex;
+        Board[nextPosition[0]][nextPosition[1]] = ClientId;
     }
 
-    private void SafeTeleport(int ClientIndex)
+    /**
+     * Performs a safe teleport of a specific client.
+     * @param ClientId Id of the client.
+     */
+    private void SafeTeleport(int ClientId)
     {
-        int currentPosition[] = GetClientOrRobotPosition(ClientIndex);
+        int currentPosition[] = GetClientOrRobotPosition(ClientId);
         Board[currentPosition[0]][currentPosition[1]] = 0;
         int nextPosition[] = RandomPosition();
 
@@ -501,16 +554,20 @@ public class GameEngine implements Runnable {
             nextPosition = RandomPosition();
         }
 
-        Board[nextPosition[0]][nextPosition[1]] = ClientIndex;
+        Board[nextPosition[0]][nextPosition[1]] = ClientId;
     }
 
-
-    private void ShortRangeAttack(int ClientIndex)
+    /**
+     * Performs a short range attack around the client.
+     * Depending on the settings this attack will vary in how it's performed.
+     * @param ClientId Id of the client.
+     */
+    private void ShortRangeAttack(int ClientId)
     {
         int numberOfRobotsKilled = 0;
         if(Settings.shortRangeAttacksKillsAllAdjacentRobots) {
 
-            int[] clientPosition = GetClientOrRobotPosition(ClientIndex);
+            int[] clientPosition = GetClientOrRobotPosition(ClientId);
 
             for(int row = clientPosition[0] - 1; row <= clientPosition[0] + 1; row++)
             {
@@ -535,7 +592,7 @@ public class GameEngine implements Runnable {
         {
             List<Integer> robotIdsAroundClient = new ArrayList<Integer>();
 
-            int[] clientPosition = GetClientOrRobotPosition(ClientIndex);
+            int[] clientPosition = GetClientOrRobotPosition(ClientId);
 
             for(int row = clientPosition[0] - 2; row <= clientPosition[0] + 2; row++)
             {
@@ -564,10 +621,10 @@ public class GameEngine implements Runnable {
 
         }
 
-        CommunicationThread.IncreaseNumberOfSafeTeleportations(ClientIndex, numberOfRobotsKilled);
+        CommunicationThread.IncreaseNumberOfSafeTeleportations(ClientId, numberOfRobotsKilled);
 
-        ((ServerPlayingController) controller).IncreasePointsOfPlayer(CommunicationThread.GetClientUserName(ClientIndex), numberOfRobotsKilled);
-        CommunicationThread.IncreaseScoreOfClient(ClientIndex, numberOfRobotsKilled);
+        ((ServerPlayingController) controller).IncreasePointsOfPlayer(CommunicationThread.GetClientUserName(ClientId), numberOfRobotsKilled);
+        CommunicationThread.IncreaseScoreOfClient(ClientId, numberOfRobotsKilled);
 
 
 
@@ -575,7 +632,8 @@ public class GameEngine implements Runnable {
     }
 
     /**
-     * Generates a random position.
+     * Generates a random position on the board
+     * @return int array
      */
     private int[] RandomPosition() {
         boolean taken = true;
@@ -600,11 +658,16 @@ public class GameEngine implements Runnable {
         return position;
     }
 
-    private int[] GetClientOrRobotPosition(int Id)
+    /**
+     *
+     * @param ClientId Id of the client.
+     * @return The position of the client.
+     */
+    private int[] GetClientOrRobotPosition(int ClientId)
     {
         for (int i = 0; i < Board[0].length; i++) {
             for (int j = 0; j < Board[1].length; j++) {
-                if (Board[i][j] == Id) {
+                if (Board[i][j] == ClientId) {
                     int[] Position = new int[2];
                     Position[0] = i;
                     Position[1] = j;
@@ -616,6 +679,10 @@ public class GameEngine implements Runnable {
         return new int[2];
     }
 
+    /**
+     * Places rubble piles on the board.
+     * @param numberOfPiles The number of piles to be placed on the map.
+     */
     private void PlaceRubbleOnMap(int numberOfPiles)
     {
         for(int i = 0; i < numberOfPiles; i++)
@@ -625,6 +692,10 @@ public class GameEngine implements Runnable {
         }
     }
 
+    /**
+     * Creates and places robots on the board.
+     * @param numberOfRobots Number of robots to be created.
+     */
     private void CreateAndPlaceRobots(int numberOfRobots)
     {
         robotList = new ArrayList<Robot>();
@@ -642,6 +713,10 @@ public class GameEngine implements Runnable {
         }
     }
 
+    /**
+     * Kills a robot.
+     * @param RobotId Id of the robot.
+     */
     private void KillRobot(int RobotId)
     {
         Iterator<Robot> it = robotList.iterator();
@@ -656,6 +731,9 @@ public class GameEngine implements Runnable {
         }
     }
 
+    /**
+     * The game goes to the next level.
+     */
     private void NextLevel()
     {
         Settings.numberOfRobots += Settings.increaseOfRobotsPerLevel;
@@ -673,6 +751,12 @@ public class GameEngine implements Runnable {
 
     }
 
+    /**
+     * Checks whether or not a robot can reach a position
+     * when their moving next.
+     * @param position The position to be checked.
+     * @return True if the position is safe, false if not.
+     */
     private boolean IsSafe(int[] position)
     {
         for(int row = position[0] - 1; row <= position[0] + 1; row++)
@@ -693,78 +777,13 @@ public class GameEngine implements Runnable {
 
         return true;
 
-        /*
-        int[] surrounding = position.clone();
-        surrounding[1] += 1;
-        if(!OutOfBounds(surrounding))
-        {
-            if(Board[surrounding[0]][surrounding[1]] < -1)
-                return false;
-        }
-
-        surrounding = position.clone();
-        surrounding[1] -= 1;
-        if(!OutOfBounds(surrounding)) {
-            if (Board[surrounding[0]][surrounding[1]] < -1)
-                return false;
-        }
-
-        surrounding = position.clone();
-        surrounding[0] += 1;
-        if(!OutOfBounds(surrounding))
-        {
-            if(Board[surrounding[0]][surrounding[1]]  < -1)
-                return false;
-        }
-
-        surrounding = position.clone();
-        surrounding[0] -= 1;
-        if(!OutOfBounds(surrounding))
-        {
-            if(Board[surrounding[0]][surrounding[1]]  < -1)
-                return false;
-        }
-
-        surrounding = position.clone();
-        surrounding[0] += 1;
-        surrounding[1] += 1;
-        if(!OutOfBounds(surrounding))
-        {
-            if(Board[surrounding[0]][surrounding[1]]  < -1)
-                return false;
-        }
-
-        surrounding = position.clone();
-        surrounding[0] -= 1;
-        surrounding[1] -= 1;
-        if(!OutOfBounds(surrounding))
-        {
-            if(Board[surrounding[0]][surrounding[1]]  < -1)
-                return false;
-        }
-
-        surrounding = position.clone();
-        surrounding[0] -= 1;
-        surrounding[1] += 1;
-        if(!OutOfBounds(surrounding))
-        {
-            if(Board[surrounding[0]][surrounding[1]]  < -1)
-                return false;
-        }
-
-        surrounding = position.clone();
-        surrounding[0] += 1;
-        surrounding[1] -= 1;
-        if(!OutOfBounds(surrounding))
-        {
-            if(Board[surrounding[0]][surrounding[1]]  < -1)
-                return false;
-        }
-
-        return true;
-        */
     }
 
+    /**
+     *
+     * @param position Position to check.
+     * @return True if the position is inside of the board, false if not.s
+     */
     private boolean OutOfBounds(int[] position)
     {
         if(position[0] < 0)
@@ -787,6 +806,11 @@ public class GameEngine implements Runnable {
         return false;
     }
 
+    /**
+     * Checks whether or not a given message corresponds to a "move command".
+     * @param msg Message to check.
+     * @return True if it's a move command, false if not.
+     */
     private boolean IsMoveCommand(String msg)
     {
         if(msg.equals("move right") ||
@@ -803,9 +827,15 @@ public class GameEngine implements Runnable {
         return false;
     }
 
-    private boolean CanMoveToPosition(String msg, int ClientIndex)
+    /**
+     * Checks whether a client can perform a certain move.
+     * @param msg Message with information about the move to execute.
+     * @param ClientId Id of the client.
+     * @return True if the client can move there, false if not.
+     */
+    private boolean CanMoveToPosition(String msg, int ClientId)
     {
-        int[] position = GetClientOrRobotPosition(ClientIndex);
+        int[] position = GetClientOrRobotPosition(ClientId);
         int[] nextPosition = new int[2];
 
 
@@ -846,6 +876,11 @@ public class GameEngine implements Runnable {
         return false;
     }
 
+    /**
+     *
+     * @param position Position to check if empty.
+     * @return True if the position is not containing a robot, client or rubble. (If 0). False if it does.
+     */
     private boolean IsEmpty(int[] position)
     {
         if(OutOfBounds(position))
@@ -856,19 +891,34 @@ public class GameEngine implements Runnable {
 
     }
 
+    /**
+     *
+     * @return True if the game has started, false if not.
+     */
     public static synchronized boolean GetGameStarted()
     {
         return gameStarted;
     }
 
+    /**
+     *
+     * @return True if the session is ongoing, false if not.
+     */
     public static synchronized  boolean GetSessionOnGoing() { return SessionOngoing;}
 
+    /**
+     * Resets the static variables after a game is completed.
+     */
     public static synchronized void ResetStaticVariables()
     {
         gameStarted = false;
         SessionOngoing = true;
     }
 
+    /**
+     * Removes a specific client from the board, and sends the information to the rest of the clients.s
+     * @param clientID Id of the client.
+     */
     public static synchronized void RemoveDisconnectedPlayerFromBoard(int clientID)
     {
         for (int i = 0; i < Board[0].length; i++) {

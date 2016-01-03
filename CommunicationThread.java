@@ -3,12 +3,17 @@ package tobdyh131;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 /**
  * Created by Tobias on 2015-11-27.
+ *
+ * The class which takes input from the user through the socket.
+ * Works as a bridge between the server and client.
+ * Receives from the user, and passes messages to the server.
  */
 public class CommunicationThread implements Runnable{
     private static int numberOfClients = 0;
@@ -33,7 +38,12 @@ public class CommunicationThread implements Runnable{
     private static Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
 
 
-
+    /**
+     * The constructor that creates the communication thread and
+     * enables communication between the server and the client through a given socket.
+     * @param s The socket
+     * @throws IOException Exception thrown when handling sockets
+     */
     public CommunicationThread(Socket s) throws IOException {
         socket = s;
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -58,6 +68,12 @@ public class CommunicationThread implements Runnable{
         }*/
     }
 
+    /**
+     * The function which is continuously executed during runtime.
+     * If the player is still alive, the game has started and its not the
+     * computers turn, this method waits for user input and then passes
+     * the information received further to the server which handles matter.
+     */
     public void run()
     {
 
@@ -134,6 +150,10 @@ public class CommunicationThread implements Runnable{
 
     }
 
+    /**
+     * A method that was used before the GUI was implemented.
+     * Prints the board in the console window for a user.
+     */
     public void PrintBoard() {
         if(PlayerTurnIndex != 0) {
             out.println("ROUND: " + GameEngine.Round + " LEVEL: " + GameEngine.Level + " PLAYER WITH ID " + allClients.get(PlayerTurnIndex - 1).clientNumber + "'s TURN" + " SAFE TP'S: "
@@ -148,11 +168,20 @@ public class CommunicationThread implements Runnable{
         }
     }
 
+    /**
+     *
+     * @return The clients id set from start
+     */
     public int GetClientId()
     {
         return clientNumber;
     }
 
+    /**
+     * Sends a message to the user that the game has ended for their part.
+     * Passes the current high score list which is handled and displayed on the "client side".
+     * @param ReasonForDeath The reason why the client has died, either killed by a robot or disconnected
+     */
     public void SendMessageOnDeath(String ReasonForDeath)
     {
         ArrayList<HighscoreInfo> highScoreList = LoadHighScore();
@@ -196,83 +225,111 @@ public class CommunicationThread implements Runnable{
 
     }
 
+    /**
+     * Loads the current high score list from a specific file.
+     * @return The high score list
+     */
     public ArrayList<HighscoreInfo> LoadHighScore()
     {
         ArrayList<HighscoreInfo> highScoreList = new ArrayList<HighscoreInfo>();
-        String fileName = "C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\highscore.txt";
-        String line = null;
 
         try {
-            FileReader fileReader =
-                    new FileReader(fileName);
+            File file = new File(getClass().getResource("highscore.txt").toURI());
+            //"C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\highscore.txt";
+            String line = null;
 
-            BufferedReader bufferedReader =
-                    new BufferedReader(fileReader);
+            try {
+                FileReader fileReader =
+                        new FileReader(file);
 
-            while((line = bufferedReader.readLine()) != null) {
-                String[] splitLine = line.split(";");
-                HighscoreInfo hsi = new HighscoreInfo(splitLine[0], Integer.valueOf(splitLine[1]));
-                highScoreList.add(hsi);
+                BufferedReader bufferedReader =
+                        new BufferedReader(fileReader);
 
-            }
+                while ((line = bufferedReader.readLine()) != null) {
+                    String[] splitLine = line.split(";");
+                    HighscoreInfo hsi = new HighscoreInfo(splitLine[0], Integer.valueOf(splitLine[1]));
+                    highScoreList.add(hsi);
 
-
-            bufferedReader.close();
-
-            Collections.sort(highScoreList, new Comparator<HighscoreInfo>(){
-                @Override public int compare(HighscoreInfo h1, HighscoreInfo h2)
-                {
-                    return h2.score - h1.score;
                 }
-            });
-
-            return highScoreList;
 
 
+                bufferedReader.close();
+
+                Collections.sort(highScoreList, new Comparator<HighscoreInfo>() {
+                    @Override
+                    public int compare(HighscoreInfo h1, HighscoreInfo h2) {
+                        return h2.score - h1.score;
+                    }
+                });
+
+                return highScoreList;
+
+
+            } catch (FileNotFoundException ex) {
+                LOGGER.info(
+                        "Unable to open file '" +
+                                file.toString() + "'\n");
+                return null;
+            } catch (IOException ex) {
+                LOGGER.info(
+                        "Error reading file '"
+                                + file.toString() + "'\n");
+                return null;
+            }
         }
-        catch(FileNotFoundException ex) {
-            LOGGER.info(
-                    "Unable to open file '" +
-                            fileName + "'\n");
+        catch(URISyntaxException e)
+        {
+            LOGGER.info(e.getMessage());
             return null;
         }
-        catch(IOException ex) {
-            LOGGER.info(
-                    "Error reading file '"
-                            + fileName + "'\n");
-            return  null;
-        }
     }
 
 
+    /**
+     * Saves the current hich score list to a specific file.
+     * @param highscoreInfoLine The line, which contain all information about the high score list, which is saved to the file.
+     * @param highscoreLength The length of the high score list (How many users is in the list)
+     */
     public void SaveHighscore(String highscoreInfoLine, int highscoreLength)
     {
-        String fileName = "C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\highscore.txt";
+
         try {
-            FileWriter fileWriter =
-                    new FileWriter(fileName);
+            File file = new File(getClass().getResource("highscore.txt").toURI());
+            //"C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\highscore.txt";
+            try {
+                FileWriter fileWriter =
+                        new FileWriter(file);
 
-            BufferedWriter bufferedWriter =
-                    new BufferedWriter(fileWriter);
+                BufferedWriter bufferedWriter =
+                        new BufferedWriter(fileWriter);
 
-            String[] splitLine = highscoreInfoLine.split(";");
+                String[] splitLine = highscoreInfoLine.split(";");
 
-            for (int i = 0; i < highscoreLength * 2; i += 2) {
-                 bufferedWriter.write(splitLine[i] + ";" + splitLine[i+1] + ";" + "\n");
+                for (int i = 0; i < highscoreLength * 2; i += 2) {
+                    bufferedWriter.write(splitLine[i] + ";" + splitLine[i + 1] + ";" + "\n");
+                }
+
+
+                bufferedWriter.close();
+            } catch (IOException ex) {
+                LOGGER.info(
+                        "Error writing to file '"
+                                + file.toString() + "'\n");
+
             }
-
-
-            bufferedWriter.close();
         }
-        catch(IOException ex) {
+        catch(URISyntaxException e)
+        {
             LOGGER.info(
-                    "Error writing to file '"
-                            + fileName + "'\n");
-
+                    "URI Syntax error: " + e.getMessage());
         }
 
     }
 
+    /**
+     * A method that was used before the GUI was implemented.
+     * Prints the board in the console window for all users.
+     */
     public static void PrintBoardForAllClients()
     {
         Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
@@ -287,11 +344,18 @@ public class CommunicationThread implements Runnable{
     }
 
 
+    /**
+     * Makes it the next players turns
+     */
     public static synchronized void NextPlayerTurn()
     {
        PlayerTurnIndex = (PlayerTurnIndex == numberOfClients) ? 0 : ++PlayerTurnIndex;
     }
 
+    /**
+     * A method that is used by the server to send a message to all the clients.
+     * @param msg Message to be sent
+     */
     public static synchronized void SendToClients(String msg)
     {
         for (CommunicationThread SCC : CommunicationThread.GetAllClients()) {
@@ -299,18 +363,39 @@ public class CommunicationThread implements Runnable{
         }
     }
 
+    /**
+     *
+     * @return The number of players connected to the game.
+     */
     public static synchronized int GetNumberOfPlayers()
     {
         return allClients.size();
     }
 
+    /**
+     *
+     * @return Which players turn it is.
+     */
     public static synchronized  int GetPlayerTurn()
     {
         return PlayerTurnIndex;
     }
 
+    /**
+     * Sets which players turn it should be.
+     * @param playerTurnIndex Which players turn it should be.
+     */
     public static synchronized void SetPlayerTurn(int playerTurnIndex) {PlayerTurnIndex = playerTurnIndex;}
 
+    /**
+     * Kills a client
+     * - Sends message about dying to the client
+     * - Closes the socket, in, and out
+     * - Removes the client from the list
+     * - Sets the player status to dead
+     * - Send information to the remaining clients
+     * @param ClientId Id of the client to be killed.
+     */
     public static synchronized  void KillClient(int ClientId)
     {
         Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
@@ -353,6 +438,16 @@ public class CommunicationThread implements Runnable{
         }
     }
 
+    /**
+     * Disconnects a client
+     * - Sends message about disconnecting to the client
+     * - Closes the socket, in, and out
+     * - Removes the client from the list
+     * - Sets the player status to dead
+     * - Send information to the remaining clients
+     * - Removes the client from the board
+     * @param index Index of the client to be disconnected
+     */
     public static synchronized  void DisconnectClient(int index)
     {
 
@@ -390,6 +485,10 @@ public class CommunicationThread implements Runnable{
 
     }
 
+    /**
+     * Sets the number of short range attacks for all the clients.
+     * @param amount Number of short range attacks.
+     */
     public static synchronized void SetNumberOfShortRangeAttacks(int amount)
     {
         Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
@@ -400,6 +499,10 @@ public class CommunicationThread implements Runnable{
         }
     }
 
+    /**
+     * Decreases the amount of short range attacks for a certain client by one.
+     * @param ClientId Id of the client who's short range attacks is to be decreased.
+     */
     public static synchronized void DecreaseNumberOfShortRangeAttacks(int ClientId)
     {
         Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
@@ -414,6 +517,10 @@ public class CommunicationThread implements Runnable{
         }
     }
 
+    /**
+     * Sets the number of safe teleportations for all the clients.
+     * @param amount Number of safe teleportations.
+     */
     public static synchronized  void SetNumberOfSafeTeleportations(int amount)
     {
         Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
@@ -424,6 +531,11 @@ public class CommunicationThread implements Runnable{
         }
     }
 
+    /**
+     * Increase the amount of safe teleportations for a certain client by one.
+     * @param ClientId Id of the client who's safe teleportations is to be increased.
+     * @param amount The amount to increase the safe teleportations.
+     */
     public static synchronized void IncreaseNumberOfSafeTeleportations(int ClientId, int amount)
     {
         Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
@@ -438,6 +550,10 @@ public class CommunicationThread implements Runnable{
         }
     }
 
+    /**
+     * Decrease the amount of safe teleportations for a certain client by one.
+     * @param ClientId Id of the client who's safe teleportations is to be decreased.
+     */
     public static synchronized void DecreaseNumberOfSafeTeleportations(int ClientId)
     {
         Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
@@ -452,16 +568,10 @@ public class CommunicationThread implements Runnable{
         }
     }
 
-    public static synchronized  void ResetDeadlines()
-    {
-        Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
-        while(it.hasNext())
-        {
-            CommunicationThread SCC = it.next();
-            SCC.deadlineForMoveReached = false;
-        }
-    }
-
+    /**
+     * Sends an updated version of the board to all clients.
+     * @param Board An updated version of the board.
+     */
     public static synchronized  void SendUpdatedBoardToClients(int[][] Board)
     {
         String boardInfo = "board;";
@@ -488,7 +598,9 @@ public class CommunicationThread implements Runnable{
         }
     }
 
-
+    /**
+     * Respawns the all the alive players after a level has been completed.
+     */
     public static void RespawnPlayers()
     {
         Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
@@ -505,11 +617,20 @@ public class CommunicationThread implements Runnable{
         }
     }
 
+    /**
+     *
+     * @return The list of all clients
+     */
     public static synchronized CopyOnWriteArrayList<CommunicationThread>  GetAllClients()
     {
         return allClients;
     }
 
+    /**
+     *
+     * @param ClientID Id of the client
+     * @return The user name of the client
+     */
     public static synchronized String GetClientUserName(int ClientID)
     {
         for (CommunicationThread CT: allClients
@@ -525,6 +646,11 @@ public class CommunicationThread implements Runnable{
         return "";
     }
 
+    /**
+     * Resets the current client numbers.
+     * This is used when a client disconnects during the connection phase.
+     * Then all the numbers/id for the clients are reset.
+     */
     public static synchronized void ResetClientNumbers()
     {
         int newClientNumber = 0;
@@ -538,11 +664,19 @@ public class CommunicationThread implements Runnable{
         }
     }
 
+    /**
+     * Sets the player turn index one step back.
+     */
     public static synchronized void DecreasePlayerTurn()
     {
         PlayerTurnIndex--;
     }
 
+    /**
+     * Increases the score of a certain client.
+     * @param ClientID Id of the client.
+     * @param scoreIncrement Amount of points to be added to the clients score.
+     */
     public static synchronized void IncreaseScoreOfClient(int ClientID, int scoreIncrement)
     {
         for (CommunicationThread CT: allClients
@@ -554,6 +688,11 @@ public class CommunicationThread implements Runnable{
         }
     }
 
+    /**
+     *
+     * @param ClientId Id of the client.
+     * @return The index of the client in the list which has the given id.
+     */
     public static synchronized  int GetClientIndex(int ClientId)
     {
         int index = 0;

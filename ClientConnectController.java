@@ -14,13 +14,14 @@ import javafx.stage.Stage;
 
 import javax.swing.*;
 import java.io.*;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.ResourceBundle;
 
 /**
  * Created by Tobias on 2015-12-22.
+ *
+ * A controller for the clients connection GUI that the user first will see when starting.
+ * This class reacts and handles events on the connection GUI.
  */
 public class ClientConnectController implements Initializable, ControlledScreen{
 
@@ -46,6 +47,13 @@ public class ClientConnectController implements Initializable, ControlledScreen{
 
     //TODO
     //Unikt username, kan eventuellt läggas till typ (1) i slutet av namnet vid connection ifall samma namn hittas.
+
+    /**
+     * When the client presses on the "Connect" button, this method is called.
+     * It checks what the relevant text field values and creates a new client thread
+     * based on those, and then starts the thread.
+     * @param event A button-click event
+     */
     @FXML
     public void handleConnectAction(ActionEvent event)
     {
@@ -55,99 +63,147 @@ public class ClientConnectController implements Initializable, ControlledScreen{
             int port = Integer.valueOf(this.port.getText());
             String userName = this.userName.getText();
 
-            Client c = new Client(ip, port, userName);
-            Thread t = new Thread(c);
-            t.setName("Client");
-            t.start();
+            //TODO
+            //titta igenom ifall en client inte kan connecta till den socketen, kanske skicka med en boolean med socketan du skapar vi checken?
+            if(true) {
 
-            WriteToFile();
+                Client c = new Client(ip, port, userName);
+                Thread t = new Thread(c);
+                t.setName("Client");
+                t.start();
 
-            myController.loadScreen("clientPlaying", "ClientPlayingScene.fxml", c);
-            myController.setScreen("clientPlaying");
+                WriteToFile();
+
+                myController.loadScreen("clientPlaying", "ClientPlayingScene.fxml", c);
+                myController.setScreen("clientPlaying");
+            }
+            else
+            {
+                consoleOutput.appendText("Could not connect to any server\n");
+            }
 
         }
         catch(UnknownHostException e)
         {
-            consoleOutput.appendText("Could not connect to any server\n");
+            consoleOutput.appendText("Wrong syntax on ip\n");
         }
 
     }
 
+    /**
+     * Checks whether or not it's possible to connect to the server.
+     * @param ip The ip address used for connecting to the socket
+     * @param port The port used for connection to the socket
+     * @return True or false whether you can connect or not.
+     */
+    public static boolean hostAvailabilityCheck(InetAddress ip, int port) {
+        try (Socket s = new Socket(ip, port)) {
+            return true;
+        } catch (IOException ex) {
+        /* ignore */
+        }
+        return false;
+    }
 
+
+    /**
+     * Sets the screenParent for the controller
+     * @param screenParent
+     */
     @Override
     public void setScreenParent(ScreensController screenParent) {
         myController = screenParent;
     }
 
+    /**
+     * Initialize function of the controller which is called absolutely first.
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ReadFromFile();
-
     }
 
+    /**
+     * Reads from a file with what information the user used the last connection.
+     * Then sets the text fields to that information.
+     */
     public void ReadFromFile()
     {
-        String fileName = "C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\clientInfo.txt";
-        String line = null;
-
         try {
-            FileReader fileReader =
-                    new FileReader(fileName);
+            File file = new File(getClass().getResource("clientInfo.txt").toURI());
+                //"C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\clientInfo.txt";
+            String line = null;
 
-            BufferedReader bufferedReader =
-                    new BufferedReader(fileReader);
+            try {
+                FileReader fileReader =
+                        new FileReader(file);
 
-            while((line = bufferedReader.readLine()) != null) {
-                String[] splitLine = line.split(";");
-                if(splitLine[0].equals("ip"))
-                {
-                    IP.setText(splitLine[1]);
+                BufferedReader bufferedReader =
+                        new BufferedReader(fileReader);
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    String[] splitLine = line.split(";");
+                    if (splitLine[0].equals("ip")) {
+                        IP.setText(splitLine[1]);
+                    } else {
+                        userName.setText(splitLine[1]);
+                    }
+
                 }
-                else
-                {
-                    userName.setText(splitLine[1]);
-                }
+
+                bufferedReader.close();
+            } catch (FileNotFoundException ex) {
+                consoleOutput.appendText(
+                        "Unable to open file '" +
+                                file.toString() + "'\n");
+            } catch (IOException ex) {
+                consoleOutput.appendText(
+                        "Error reading file '"
+                                + file.toString() + "'\n");
+            }
+        }
+        catch(URISyntaxException e)
+        {
+            consoleOutput.appendText("URI syntax error: " + e.getMessage() + "\n");
+        }
+    }
+
+    /**
+     * Before closing, the information used for connection is saved to a file
+     * using this method.
+     */
+    public void WriteToFile() {
+        try {
+            File file = new File(getClass().getResource("clientInfo.txt").toURI());
+
+            //"C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\clientInfo.txt";
+            try {
+                FileWriter fileWriter =
+                        new FileWriter(file);
+
+                BufferedWriter bufferedWriter =
+                        new BufferedWriter(fileWriter);
+
+
+                bufferedWriter.write("ip;" + IP.getText() + ";\n");
+                bufferedWriter.write("username;" + userName.getText() + ";\n");
+
+
+                bufferedWriter.close();
+            } catch (IOException ex) {
+                consoleOutput.appendText(
+                        "Error writing to file '"
+                                + file.toString() + "'\n");
 
             }
 
-            bufferedReader.close();
         }
-        catch(FileNotFoundException ex) {
-            consoleOutput.appendText(
-                    "Unable to open file '" +
-                            fileName + "'\n");
+        catch(URISyntaxException e)
+        {
+            consoleOutput.appendText(e.getMessage() + "\n");
         }
-        catch(IOException ex) {
-            consoleOutput.appendText(
-                    "Error reading file '"
-                            + fileName + "'\n");
-        }
-    }
-
-    public void WriteToFile()
-    {
-        String fileName = "C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\clientInfo.txt";
-        try {
-            FileWriter fileWriter =
-                    new FileWriter(fileName);
-
-            BufferedWriter bufferedWriter =
-                    new BufferedWriter(fileWriter);
-
-
-            bufferedWriter.write("ip;" + IP.getText() + ";\n");
-            bufferedWriter.write("username;" + userName.getText() + ";\n");
-
-
-            bufferedWriter.close();
-        }
-        catch(IOException ex) {
-            consoleOutput.appendText(
-                    "Error writing to file '"
-                            + fileName + "'\n");
-
-        }
-
     }
 
 }
