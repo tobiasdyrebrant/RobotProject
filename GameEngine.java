@@ -41,6 +41,8 @@ class GameEngine implements Runnable {
     public GameEngine(ServerSettings s, Object controller)
     {
         this.controller = controller;
+        //Settings = s;
+        //CommunicationThread.SendToClients("start;" + Settings.height + ";" + Settings.width + ";");
         CreateLevel(s);
         gameStarted = true;
         Level = 1;

@@ -76,8 +76,8 @@ public class ServerDuringConnectionController implements Initializable, Controll
     public void handleStartGame()
     {
         if(CommunicationThread.GetNumberOfPlayers() >= server.GetServerSettings().numberOfPlayersBeforeStart) {
-            CommunicationThread.SendToClients("start;" + server.GetServerSettings().height + ";" + server.GetServerSettings().width + ";");
 
+            CommunicationThread.SendToClients("start;" + server.GetServerSettings().height + ";" + server.GetServerSettings().width + ";");
             SCT.CloseConnectionThread();
 
             myController.loadScreen("serverPlaying", "ServerPlayingScene.fxml", server.GetServerSettings());

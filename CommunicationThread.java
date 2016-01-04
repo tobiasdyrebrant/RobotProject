@@ -29,8 +29,6 @@ class CommunicationThread implements Runnable{
     private BufferedReader in;
     private PrintWriter out;
 
-    private boolean deadlineForMoveReached = false;
-
     private boolean playerAlive = true;
 
     private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
@@ -133,7 +131,6 @@ class CommunicationThread implements Runnable{
      */
     public void run()
     {
-
             while(playerAlive) {
                 if (GameEngine.GetGameStarted()) {
                     if (PlayerTurnIndex != 0) {
@@ -164,33 +161,6 @@ class CommunicationThread implements Runnable{
                     }
                 }
 
-                /*
-                else
-                {
-                    try{
-                        inline = in.readLine();
-
-                        try
-                        {
-                            if(inline != null) {
-                                if (inline.equals("quit"))
-                                    Server.queue.put(new ComMessage("quit", this.clientNumber));
-                            }
-                        }
-                        catch(InterruptedException e)
-                        {
-                            LOGGER.info("Could not put message in the server que: " + e.getMessage());
-                        }
-
-                    }
-                    catch(IOException e)
-                    {
-                        LOGGER.info("Could not read from client/close socket: " + e.getMessage());
-                    }
-
-
-                }
-                */
             }
 
     }

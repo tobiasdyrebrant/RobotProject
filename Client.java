@@ -19,7 +19,7 @@ class Client implements Runnable{
     public final BlockingQueue<String> queue = new LinkedBlockingQueue<>();
 
     public BufferedReader in;
-    private PrintWriter out;
+    public PrintWriter out;
     private BufferedReader kdb_reader;
     private Socket socket;
 

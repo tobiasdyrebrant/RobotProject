@@ -34,7 +34,6 @@ class ScreensController extends StackPane {
      * @param name Name of the screen.
      * @param resource Which resource to be loaded.
      * @param c The client to be passed to the controller.
-     * @return True if succeeded, false if not.
      */
     public void loadScreen(String name, String resource, Client c) {
         try {
@@ -60,7 +59,6 @@ class ScreensController extends StackPane {
      * @param name Name of the screen.
      * @param resource Which resource to be loaded.
      * @param s The server to be passed to the controller.
-     * @return True if succeeded, false if not.
      */
     public void loadScreen(String name, String resource, Server s) {
         try {
@@ -88,7 +86,6 @@ class ScreensController extends StackPane {
      * @param name Name of the screen.
      * @param resource Which resource to be loaded.
      * @param s The server settings to be passed to the controller.
-     * @return True if succeeded, false if not.
      */
     public void loadScreen(String name, String resource, ServerSettings s) {
         try {
@@ -114,7 +111,6 @@ class ScreensController extends StackPane {
      * @param name Name of the screen.
      * @param resource Which resource to be loaded.
      * @param ConsecutiveRound If true, then load settings from previous session. If false, don't.
-     * @return True if succeeded, false if not.
      */
     public void loadScreen(String name, String resource, boolean ConsecutiveRound) {
         try {
@@ -143,7 +139,6 @@ class ScreensController extends StackPane {
      * @param name Name of the screen.
      * @param resource Which resource to be loaded.
      * @param highscoreList The high score list to be passed to the controller.
-     * @return True if succeeded, false if not.
      */
     public void loadScreen(String name, String resource, ObservableList<HighscoreInfo> highscoreList) {
         try {
@@ -168,7 +163,6 @@ class ScreensController extends StackPane {
      * Loads a screen.
      * @param name Name of the screen.
      * @param resource Which resource to be loaded.
-     * @return True if succeeded, false if not.
      */
     public void loadScreen(String name, String resource) {
         try {
@@ -189,7 +183,6 @@ class ScreensController extends StackPane {
     /**
      * Sets which screen to be shown.
      * @param name Name of the screen to be shown.
-     * @return True if succeded, false if not.
      */
     public void setScreen(final String name) {
 

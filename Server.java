@@ -67,6 +67,7 @@ public class Server implements Runnable {
     public void run() {
         while(GameEngine.GetSessionOnGoing())
         {
+
             if(GameEngine.GetGameStarted()) {
                 ComMessage msg;
                 while ((msg = queue.poll()) != null) {
@@ -77,15 +78,6 @@ public class Server implements Runnable {
                     }
                 }
             }
-
-           /* else
-            {
-                while((msg = queue.poll()) != null)
-                {
-                    if(msg.Message.equals("quit"))
-                        ((ServerDuringConnectionController)controller).playerDisconnected(msg.ClientId);
-                }
-            }*/
 
 
         }
