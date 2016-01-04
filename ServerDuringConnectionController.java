@@ -75,8 +75,6 @@ public class ServerDuringConnectionController implements Initializable, Controll
     @FXML
     public void handleStartGame()
     {
-        //TODO
-        //Ska det vara >= eller bara == ?
         if(CommunicationThread.GetNumberOfPlayers() >= server.GetServerSettings().numberOfPlayersBeforeStart) {
             CommunicationThread.SendToClients("start;" + server.GetServerSettings().height + ";" + server.GetServerSettings().width + ";");
 

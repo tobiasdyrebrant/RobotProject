@@ -99,10 +99,16 @@ public class ServerListener extends Thread {
                         }
 
                         else if (lineFromServer.equals("no sra")) {
-                            ((ClientPlayingController) controller).WriteToTextArea("You've used all the short range attacks for this level \n");
-                        } else if (lineFromServer.equals("no st")) {
-                            ((ClientPlayingController) controller).WriteToTextArea("You can't safe teleport anymore,\n either kill an enemy or survive to the next round \n");
+                            ((ClientPlayingController) controller).WriteToTextArea("You've used all the short range attacks for this level ");
                         }
+                        else if (lineFromServer.equals("no st")) {
+                            ((ClientPlayingController) controller).WriteToTextArea("You can't safe teleport anymore,\n either kill an enemy or survive to the next round");
+                        }
+                        else if(lineFromServer.equals("wrong move"))
+                        {
+                            ((ClientPlayingController) controller).WriteToTextArea("You can't move there!");
+                        }
+
                     }
                 }
             catch(IOException e) {

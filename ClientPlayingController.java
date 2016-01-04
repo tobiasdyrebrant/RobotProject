@@ -554,7 +554,9 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
 
             gridPane.getChildren().clear();
 
-            for (int i = 1; i <= Board[0].length; i++) {
+            gridPane.setGridLinesVisible(true);
+
+            for (int i = 1; i <= Board.length; i++) {
                 for (int j = 1; j <= Board[1].length; j++) {
 
 

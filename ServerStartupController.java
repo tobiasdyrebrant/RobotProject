@@ -90,37 +90,67 @@ public class ServerStartupController implements Initializable, ControlledScreen{
     {
         ServerSettings Settings = new ServerSettings();
 
-        //Maximum height 15
-        Settings.height = (Integer.valueOf(height.getText()) > 15) ? 15 : Integer.valueOf(height.getText());
+        try {
+            //Maximum height 15, minimum 5
+            Settings.height = (Integer.valueOf(height.getText()) > 15) ? 15 : Integer.valueOf(height.getText());
+            if(Integer.valueOf(height.getText()) > 15)
+            {
+                Settings.height = 15;
+            }
+            else if(Integer.valueOf(height.getText()) < 5)
+            {
+                Settings.height = 5;
+            }
+            else
+            {
+                Settings.height = Integer.valueOf(height.getText());
+            }
 
-        //Maximum length 15
-        Settings.width = (Integer.valueOf(width.getText()) > 15) ? 15 : Integer.valueOf(width.getText());
 
-        Settings.numberOfPlayersBeforeStart = Integer.valueOf(numberOfPlayersBeforeStart.getText());
-        Settings.numberOfRoundsPerLevel = Integer.valueOf(numberOfRoundsPerLevel.getText());
-        Settings.numberOfRobots = Integer.valueOf(numberOfRobots.getText());
-        Settings.increaseOfRobotsPerLevel = Integer.valueOf(increaseOfRobotsPerLevel.getText());
-        Settings.robotsMergeOnCollision = robotsMergeOnCollision.isSelected();
-        Settings.numberOfRubbles = Integer.valueOf(numberOfRubbles.getText());
-        Settings.changeOfRubblesPerLevel = Integer.valueOf(changeOfRubblesPerLevel.getText());
-        Settings.numberOfSafeTeleportationsAwardedPerKill = Integer.valueOf(numberOfSafeTeleportationsAwardedPerKill.getText());
-        Settings.numberOfSafeTeleportationsAwardedPerLevel = Integer.valueOf(numberOfSafeTeleportationsAwardedPerLevel.getText());
-        Settings.numberOfShortRangeAttacksAwardedPerLevel = Integer.valueOf(numberOfShortRangeAttacksAwardedPerLevel.getText());
-        Settings.robotsLockToTarget = robotsLockToTarget.isSelected();
-        //If false, kills one random robot in the area of "2 blocks away".
-        Settings.shortRangeAttacksKillsAllAdjacentRobots = shortRangeAttacksKillsAllAdjacentRobots.isSelected();
-        Settings.robotPerceptionRowRange = Integer.valueOf(robotPerceptionRowRange.getText());
-        Settings.robotPerceptionColumnRange = Integer.valueOf(robotPerceptionColumnRange.getText());
-        Settings.port = Integer.valueOf(port.getText());
+            //Maximum width 15, minimum 5
+            if(Integer.valueOf(width.getText()) > 15)
+            {
+                Settings.width = 15;
+            }
+            else if(Integer.valueOf(width.getText()) < 5)
+            {
+                Settings.width = 5;
+            }
+            else
+            {
+                Settings.width = Integer.valueOf(width.getText());
+            }
 
-        Server s = new Server(Settings);
-        Thread t = new Thread(s);
-        t.setName("Server");
-        t.start();
-        WriteToFile(Settings);
+            Settings.numberOfPlayersBeforeStart = Integer.valueOf(numberOfPlayersBeforeStart.getText());
+            Settings.numberOfRoundsPerLevel = Integer.valueOf(numberOfRoundsPerLevel.getText());
+            Settings.numberOfRobots = Integer.valueOf(numberOfRobots.getText());
+            Settings.increaseOfRobotsPerLevel = Integer.valueOf(increaseOfRobotsPerLevel.getText());
+            Settings.robotsMergeOnCollision = robotsMergeOnCollision.isSelected();
+            Settings.numberOfRubbles = Integer.valueOf(numberOfRubbles.getText());
+            Settings.changeOfRubblesPerLevel = Integer.valueOf(changeOfRubblesPerLevel.getText());
+            Settings.numberOfSafeTeleportationsAwardedPerKill = Integer.valueOf(numberOfSafeTeleportationsAwardedPerKill.getText());
+            Settings.numberOfSafeTeleportationsAwardedPerLevel = Integer.valueOf(numberOfSafeTeleportationsAwardedPerLevel.getText());
+            Settings.numberOfShortRangeAttacksAwardedPerLevel = Integer.valueOf(numberOfShortRangeAttacksAwardedPerLevel.getText());
+            Settings.robotsLockToTarget = robotsLockToTarget.isSelected();
+            //If false, kills one random robot in the area of "2 blocks away".
+            Settings.shortRangeAttacksKillsAllAdjacentRobots = shortRangeAttacksKillsAllAdjacentRobots.isSelected();
+            Settings.robotPerceptionRowRange = Integer.valueOf(robotPerceptionRowRange.getText());
+            Settings.robotPerceptionColumnRange = Integer.valueOf(robotPerceptionColumnRange.getText());
+            Settings.port = Integer.valueOf(port.getText());
 
-        myController.loadScreen("serverDuringConnection", "ServerConnectionScene.fxml", s);
-        myController.setScreen("serverDuringConnection");
+            Server s = new Server(Settings);
+            Thread t = new Thread(s);
+            t.setName("Server");
+            t.start();
+            WriteToFile(Settings);
+
+            myController.loadScreen("serverDuringConnection", "ServerConnectionScene.fxml", s);
+            myController.setScreen("serverDuringConnection");
+        }
+        catch(NumberFormatException e)
+        {
+            consoleOutput.appendText("You've set a string where it should \n be an integer! \n");
+        }
 
     }
 

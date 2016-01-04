@@ -49,8 +49,24 @@ public class CommunicationThread implements Runnable{
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
-        this.clientUserName = in.readLine();
+        String username = in.readLine();
+        //this.clientUserName = in.readLine();
         this.clientScore = 0;
+
+        boolean userNameExists = false;
+        for (CommunicationThread CT: allClients
+             ) {
+            if(CT.clientUserName.equals(username))
+            {
+                AssignNewUsername(username);
+                userNameExists = true;
+                break;
+            }
+        }
+
+        if(!userNameExists)
+            clientUserName = username;
+
 
 
         out.println("id;" + clientNumber + ";");
@@ -66,6 +82,49 @@ public class CommunicationThread implements Runnable{
         {
             LOGGER.info("CommunicationThread: " + e.getMessage());
         }*/
+    }
+
+    /**
+     * Assigns a new username to the client if it's alread taken
+     * @param userName Username that was already taken
+     */
+    public void AssignNewUsername(String userName)
+    {
+        String changedUsername = userName;
+        boolean notTaken = false;
+        int numberOfRepetitions = 1;
+
+        while(!notTaken)
+        {
+            changedUsername = userName + "(" + numberOfRepetitions + ")";
+            if(!UsernameTaken(changedUsername))
+            {
+                notTaken = true;
+                clientUserName = changedUsername;
+            }
+            numberOfRepetitions++;
+        }
+    }
+
+    /**
+     * Checks if the username is already taken
+     * @param username The username to check
+     * @return
+     */
+    public boolean UsernameTaken(String username)
+    {
+        boolean userNameExists = false;
+        for (CommunicationThread CT: allClients
+                ) {
+            if(CT.clientUserName.equals(username))
+            {
+                AssignNewUsername(username);
+                userNameExists = true;
+                break;
+            }
+        }
+
+        return userNameExists;
     }
 
     /**
@@ -86,19 +145,7 @@ public class CommunicationThread implements Runnable{
                                 if (inline != null) {
                                     if (inline.equals("quit")) {
                                         Server.queue.put(new ComMessage("quit", this.clientNumber));
-                                    /*int index = 0;
-                                    for (CommunicationThread c: allClients
-                                         ) {
-                                        if(c.clientNumber == this.clientNumber)
-                                            break;
-                                        else
-                                            index++;
-                                    }
-
-                                    DisconnectClient(index);
-                                    break;*/
                                         break;
-
                                     }
 
                                     if (inline.equals("short range attack") && (numberOfShortRangeAttacks <= 0)) {
@@ -158,12 +205,11 @@ public class CommunicationThread implements Runnable{
         if(PlayerTurnIndex != 0) {
             out.println("ROUND: " + GameEngine.Round + " LEVEL: " + GameEngine.Level + " PLAYER WITH ID " + allClients.get(PlayerTurnIndex - 1).clientNumber + "'s TURN" + " SAFE TP'S: "
                         + allClients.get(PlayerTurnIndex - 1).numberOfSafeTeleportations + " SRA'S: " + allClients.get(PlayerTurnIndex - 1).numberOfShortRangeAttacks);
-            for (int i = 0; i < GameEngine.Board[0].length; i++) {
+            for (int i = 0; i < GameEngine.Board.length; i++) {
                 for (int j = 0; j < GameEngine.Board[1].length; j++) {
                     out.print("  " + GameEngine.Board[i][j]);
                 }
                 out.println("");
-                //out.println("  " + GameEngine.Board[i][0] + "  " + GameEngine.Board[i][1] + "  " + GameEngine.Board[i][2] + "  " + GameEngine.Board[i][3] + "  " + GameEngine.Board[i][4] + "  " + GameEngine.Board[i][5] );
             }
         }
     }
@@ -339,6 +385,21 @@ public class CommunicationThread implements Runnable{
             if(SCC != null)
             {
                 SCC.PrintBoard();
+            }
+        }
+    }
+
+    /**
+     * Sends a message to a specific client
+     * @param ClientId Id of the Client
+     * @param msg Message to be sent
+     */
+    public static void SendMessageToClient(int ClientId, String msg)
+    {
+        for (CommunicationThread SCC : CommunicationThread.GetAllClients()) {
+            if(SCC.GetClientId() == ClientId)
+            {
+                SCC.out.println(msg);
             }
         }
     }
@@ -576,7 +637,7 @@ public class CommunicationThread implements Runnable{
     {
         String boardInfo = "board;";
 
-        for (int i = 0; i < Board[0].length; i++) {
+        for (int i = 0; i < Board.length; i++) {
             for (int j = 0; j < Board[1].length; j++) {
                 if(Board[i][j] == -1)
                 {

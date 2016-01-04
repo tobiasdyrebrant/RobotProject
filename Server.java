@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * This is the Server. Its main purpose is to receive messages from the communication threads,
  * and pass the further to the game engine which then handles these messages.
  */
-public class Server extends Application implements Runnable {
+public class Server implements Runnable {
     private static Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
 
     public static BlockingQueue<ComMessage> queue = new LinkedBlockingQueue<ComMessage>();
@@ -32,32 +32,6 @@ public class Server extends Application implements Runnable {
 
     //TODO
     //Skall en client kunna disconnecta under connect scenen så fixa det.
-
-    //TODO
-    //Ta bort?...
-    public static void main(String[] args) {
-        launch();
-    }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        ScreensController mainContainer = new ScreensController();
-        mainContainer.loadScreen("serverStartup", "ServerStartupScene.fxml");
-
-        mainContainer.setScreen("serverStartup");
-
-        Group root = new Group();
-        root.getChildren().addAll(mainContainer);
-        Scene scene = new Scene(root, 813, 590);
-        primaryStage.setResizable(false);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    public Server()
-    {
-
-    }
 
     /**
      * The constructor that creates the server based on the settings.
@@ -109,16 +83,16 @@ public class Server extends Application implements Runnable {
                     }
                 }
             }
-            /*
-            else
+
+           /* else
             {
                 while((msg = queue.poll()) != null)
                 {
                     if(msg.Message.equals("quit"))
                         ((ServerDuringConnectionController)controller).playerDisconnected(msg.ClientId);
                 }
-            }
-            */
+            }*/
+
 
         }
 

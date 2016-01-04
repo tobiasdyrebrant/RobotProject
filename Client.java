@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * This is the Client, its main purpose is to pass messages from the user
  * through the socket where the message is received and handled.
  */
-public class Client extends Application implements Runnable{
+public class Client implements Runnable{
     private static Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
 
     public BlockingQueue<String> queue = new LinkedBlockingQueue<String>();
@@ -38,55 +38,18 @@ public class Client extends Application implements Runnable{
 
     private boolean Connected = true;
 
-
-    //TODO
-    //Ta bort eventuellt....
-    public static void main(String[] args) {
-        LOGGER.setLevel(Level.OFF);
-
-        launch(args);
-        //(new Thread(new Client(args))).start();
-    }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-
-        ScreensController mainContainer = new ScreensController();
-        mainContainer.loadScreen("clientConnect", "ClientConnectScene.fxml");
-        //mainContainer.getScreen("clientConnect").
-        //mainContainer.loadScreen("clientPlaying", "ClientPlayingScene.fxml");
-
-        mainContainer.setScreen("clientConnect");
-
-        Group root = new Group();
-        root.getChildren().addAll(mainContainer);
-        Scene scene = new Scene(root, 765, 598);
-        primaryStage.setResizable(false);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        //Parent root = FXMLLoader.load(getClass().getResource("ClientConnectScene.fxml"));
-        //primaryStage.setTitle("Client startup");
-        //primaryStage.setScene(new Scene(root, 315, 500));
-        //primaryStage.setResizable(false);
-        //primaryStage.show();
-    }
-
-    public Client()
-    {
-
-    }
+    public boolean SocketError = false;
 
     /**
      * Constructor that creates the client based on the 3 input arguments.
-     * @param ip The ip address used for connecting to the socket
-     * @param port The port used for connection to the socket
+     * @param address The ip address of the connection
+     * @param port The port of the connection
      * @param UserName The client's username
      */
-    public Client(InetAddress ip, int port, String UserName)
+    public Client(InetAddress address, int port, String UserName)
     {
         try {
-            socket = new Socket(ip, port);
+            socket = new Socket(address,port);
 
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
@@ -97,6 +60,7 @@ public class Client extends Application implements Runnable{
         }
         catch (IOException e)
         {
+            SocketError = true;
             LOGGER.info("Client constructor I/O error : " + e.getMessage());
         }
     }

@@ -111,12 +111,7 @@ public class GameEngine implements Runnable {
                             Move(msg.ClientId, msg.Message);
                             CommunicationThread.NextPlayerTurn();
                         } else {
-                            //TODO
-                            //Skicka felmeddelande till clienten
-                            //Skapa en statisk funktion i CommunicationThread och skicka med client id
-                            //Den i sin tur går igenom allClients listan och när den hittar rätt klient så skriver
-                            //den ut i dess out variabel
-                            System.out.println("Can't move there");
+                            CommunicationThread.SendMessageToClient(msg.ClientId,"wrong move");
                         }
 
 
@@ -227,7 +222,7 @@ public class GameEngine implements Runnable {
 
         ArrayList<int[]> clientPositions = new ArrayList<>();
 
-        for (int i = 0; i < Board[0].length; i++) {
+        for (int i = 0; i < Board.length; i++) {
             for (int j = 0; j < Board[1].length; j++) {
                 if(Board[i][j] > 0)
                 {
@@ -639,7 +634,7 @@ public class GameEngine implements Runnable {
         boolean taken = true;
         int[] position = new int[2];
         while(taken) {
-            int rowLength = Board[0].length;
+            int rowLength = Board.length;
             int columnLength = Board[1].length;
             Random rn = new Random();
             int row = rn.nextInt(rowLength);
@@ -665,7 +660,7 @@ public class GameEngine implements Runnable {
      */
     private int[] GetClientOrRobotPosition(int ClientId)
     {
-        for (int i = 0; i < Board[0].length; i++) {
+        for (int i = 0; i < Board.length; i++) {
             for (int j = 0; j < Board[1].length; j++) {
                 if (Board[i][j] == ClientId) {
                     int[] Position = new int[2];
@@ -790,7 +785,7 @@ public class GameEngine implements Runnable {
         {
             return true;
         }
-        else if(position[0] > (Board[0].length - 1))
+        else if(position[0] > (Board.length - 1))
         {
             return true;
         }
@@ -854,7 +849,7 @@ public class GameEngine implements Runnable {
 
             case "move down":   nextPosition[0] = position[0] + 1;
                 nextPosition[1] = position[1];
-                return ((position[0] != (Board[0].length - 1)) && IsEmpty(nextPosition));
+                return ((position[0] != (Board.length - 1)) && IsEmpty(nextPosition));
 
             case "move up left":nextPosition[0] = position[0] - 1;
                 nextPosition[1] = position[1] - 1;
@@ -862,7 +857,7 @@ public class GameEngine implements Runnable {
 
             case "move down left":  nextPosition[0] = position[0] + 1;
                 nextPosition[1] = position[1] - 1;
-                return ((position[1] != 0) && (position[0] != (Board[0].length - 1)) && IsEmpty(nextPosition));
+                return ((position[1] != 0) && (position[0] != (Board.length - 1)) && IsEmpty(nextPosition));
 
             case "move up right":   nextPosition[0] = position[0] - 1;
                 nextPosition[1] = position[1] + 1;
@@ -870,7 +865,7 @@ public class GameEngine implements Runnable {
 
             case "move down right": nextPosition[0] = position[0] + 1;
                 nextPosition[1] = position[1] + 1;
-                return ((position[0] != (Board[0].length - 1)) && (position[1] != (Board[1].length - 1)) && IsEmpty(nextPosition));
+                return ((position[0] != (Board.length - 1)) && (position[1] != (Board[1].length - 1)) && IsEmpty(nextPosition));
         }
 
         return false;
@@ -921,7 +916,7 @@ public class GameEngine implements Runnable {
      */
     public static synchronized void RemoveDisconnectedPlayerFromBoard(int clientID)
     {
-        for (int i = 0; i < Board[0].length; i++) {
+        for (int i = 0; i < Board.length; i++) {
             for (int j = 0; j < Board[1].length; j++) {
                 if (Board[i][j] == clientID) {
                     Board[i][j] = 0;

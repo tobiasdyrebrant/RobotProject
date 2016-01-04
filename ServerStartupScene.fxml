@@ -42,10 +42,11 @@
       <CheckBox fx:id="shortRangeAttacksKillsAllAdjacentRobots" layoutX="77.0" layoutY="326.0" mnemonicParsing="false" selected="true" text="Short range attacks kills all adjacent robots" />
       <CheckBox fx:id="robotsLockToTarget" layoutX="77.0" layoutY="354.0" mnemonicParsing="false" text="Robots locks to a target" />
       <Text layoutX="394.0" layoutY="348.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port" wrappingWidth="37.990234375" />
-      <Button fx:id="hostButton" layoutX="249.0" layoutY="420.0" mnemonicParsing="false" onAction="#handleHostAction" prefHeight="83.0" prefWidth="328.0" text="Host game on port">
+      <Button fx:id="hostButton" layoutX="73.0" layoutY="430.0" mnemonicParsing="false" onAction="#handleHostAction" prefHeight="83.0" prefWidth="328.0" text="Host game on port">
          <font>
             <Font size="27.0" />
          </font>
       </Button>
+      <TextArea fx:id="consoleOutput" layoutX="473.0" layoutY="430.0" prefHeight="83.0" prefWidth="263.0" />
    </children>
 </AnchorPane>

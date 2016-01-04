@@ -45,9 +45,6 @@ public class ClientConnectController implements Initializable, ControlledScreen{
     @FXML
     private ImageView iV;
 
-    //TODO
-    //Unikt username, kan eventuellt läggas till typ (1) i slutet av namnet vid connection ifall samma namn hittas.
-
     /**
      * When the client presses on the "Connect" button, this method is called.
      * It checks what the relevant text field values and creates a new client thread
@@ -59,15 +56,16 @@ public class ClientConnectController implements Initializable, ControlledScreen{
     {
         try
         {
+
             InetAddress ip = InetAddress.getByName(IP.getText());
+
             int port = Integer.valueOf(this.port.getText());
+
+
             String userName = this.userName.getText();
 
-            //TODO
-            //titta igenom ifall en client inte kan connecta till den socketen, kanske skicka med en boolean med socketan du skapar vi checken?
-            if(true) {
-
-                Client c = new Client(ip, port, userName);
+            Client c = new Client(ip, port, userName);
+            if(!c.SocketError) {
                 Thread t = new Thread(c);
                 t.setName("Client");
                 t.start();
@@ -79,13 +77,23 @@ public class ClientConnectController implements Initializable, ControlledScreen{
             }
             else
             {
-                consoleOutput.appendText("Could not connect to any server\n");
+                consoleOutput.appendText("Could not connect to any server! \n");
             }
+
+
+
+
+
+
 
         }
         catch(UnknownHostException e)
         {
             consoleOutput.appendText("Wrong syntax on ip\n");
+        }
+        catch(NumberFormatException e)
+        {
+            consoleOutput.appendText("Wrong syntax on port\n");
         }
 
     }
