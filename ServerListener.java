@@ -1,22 +1,20 @@
 package tobdyh131;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by Tobias on 2015-11-24.
  *
  * A class that listens to the server, receives the messages the server is sending, and the passes it to the client.
  */
-public class ServerListener extends Thread {
+class ServerListener extends Thread {
     final private BufferedReader fromServer;
 
-    private Object controller;
+    private final Object controller;
 
     private int BoardHeight;
     private int BoardWidth;

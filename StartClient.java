@@ -5,8 +5,6 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.util.logging.Level;
-
 /**
  * Created by Tobias on 28-Dec-15.
  *
@@ -22,6 +20,12 @@ public class StartClient extends Application {
 
         launch(args);
     }
+
+    public StartClient()
+    {
+
+    }
+
 
     /**
      * This method is called in the main function. It starts the GUI for a

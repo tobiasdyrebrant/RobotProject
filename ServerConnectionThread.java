@@ -15,9 +15,8 @@ import java.util.logging.Logger;
  * This class is all about connections made by clients. It waits for a connection to occur
  * and then it creates a communication thread based on that connection/socket.
  */
-public class ServerConnectionThread implements Runnable {
-    private static Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
-    private static FileHandler fh;
+class ServerConnectionThread implements Runnable {
+    private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
 
     private ServerSocket serverSocket;
 

@@ -12,18 +12,17 @@ import java.util.concurrent.ThreadLocalRandom;
  * Controls everything that happens on the board, if a player or computer moves,
  * if a level or round is over etc.
  */
-public class GameEngine implements Runnable {
-    public static BlockingQueue<ComMessage> queue = new LinkedBlockingQueue<>();
+class GameEngine implements Runnable {
+    public static final BlockingQueue<ComMessage> queue = new LinkedBlockingQueue<>();
     public static int Board[][];
     public static int Round;
     public static int Level;
     private static boolean gameStarted = false;
     private static boolean SessionOngoing = true;
-    private ComMessage msg;
 
     private ArrayList<Robot> robotList;
 
-    private Object controller;
+    private final Object controller;
 
 
 
@@ -98,6 +97,7 @@ public class GameEngine implements Runnable {
                     gameStarted = false;
                     break;
                 }
+                ComMessage msg;
                 while ((msg = queue.poll()) != null) {
                     if (msg.Message.equals("spawn")) {
                         int position[] = RandomPosition();
@@ -235,45 +235,43 @@ public class GameEngine implements Runnable {
         }
 
         if(!clientPositions.isEmpty()) {
-            for (int i = 0; i < robotList.size(); i++) {
+            for (Robot aRobotList : robotList) {
                 int closestClient = -1;
 
                 //Find closest client
                 for (int j = 0; j < clientPositions.size(); j++) {
                     int rowDifference;
-                    if (robotList.get(i).position[0] > clientPositions.get(j)[0])
-                        rowDifference = robotList.get(i).position[0] - clientPositions.get(j)[0];
+                    if (aRobotList.position[0] > clientPositions.get(j)[0])
+                        rowDifference = aRobotList.position[0] - clientPositions.get(j)[0];
                     else
-                        rowDifference = clientPositions.get(j)[0] - robotList.get(i).position[0];
+                        rowDifference = clientPositions.get(j)[0] - aRobotList.position[0];
 
                     int columnDifference;
-                    if (robotList.get(i).position[1] > clientPositions.get(j)[1])
-                        columnDifference = robotList.get(i).position[1] - clientPositions.get(j)[1];
+                    if (aRobotList.position[1] > clientPositions.get(j)[1])
+                        columnDifference = aRobotList.position[1] - clientPositions.get(j)[1];
                     else
-                        columnDifference = clientPositions.get(j)[1] - robotList.get(i).position[1];
+                        columnDifference = clientPositions.get(j)[1] - aRobotList.position[1];
 
                     //Compares to the current closest clients
-                    if(closestClient != -1) {
+                    if (closestClient != -1) {
                         int currentClosestClientRowDifference;
-                        if (robotList.get(i).position[0] > clientPositions.get(closestClient)[0])
-                            currentClosestClientRowDifference = robotList.get(i).position[0] - clientPositions.get(closestClient)[0];
+                        if (aRobotList.position[0] > clientPositions.get(closestClient)[0])
+                            currentClosestClientRowDifference = aRobotList.position[0] - clientPositions.get(closestClient)[0];
                         else
                             currentClosestClientRowDifference = clientPositions.get(j)[0] - robotList.get(closestClient).position[0];
 
                         int currentClosestClientColumnDifference;
-                        if (robotList.get(i).position[1] > clientPositions.get(closestClient)[1])
-                            currentClosestClientColumnDifference = robotList.get(i).position[1] - clientPositions.get(closestClient)[1];
+                        if (aRobotList.position[1] > clientPositions.get(closestClient)[1])
+                            currentClosestClientColumnDifference = aRobotList.position[1] - clientPositions.get(closestClient)[1];
                         else
-                            currentClosestClientColumnDifference = clientPositions.get(closestClient)[1] - robotList.get(i).position[1];
-                        if((rowDifference <= Settings.robotPerceptionRowRange) && (columnDifference <= Settings.robotPerceptionColumnRange)) {
+                            currentClosestClientColumnDifference = clientPositions.get(closestClient)[1] - aRobotList.position[1];
+                        if ((rowDifference <= Settings.robotPerceptionRowRange) && (columnDifference <= Settings.robotPerceptionColumnRange)) {
                             if ((rowDifference + columnDifference) < (currentClosestClientRowDifference + currentClosestClientColumnDifference)) {
                                 closestClient = j;
                             }
                         }
-                    }
-                    else
-                    {
-                        if((rowDifference <= Settings.robotPerceptionRowRange) && (columnDifference <= Settings.robotPerceptionColumnRange)) {
+                    } else {
+                        if ((rowDifference <= Settings.robotPerceptionRowRange) && (columnDifference <= Settings.robotPerceptionColumnRange)) {
                             closestClient = j;
                         }
                     }
@@ -283,25 +281,23 @@ public class GameEngine implements Runnable {
 
 
                 //If the robot has found any close clients
-                if(closestClient != -1) {
+                if (closestClient != -1) {
                     //Move towards closest client
-                    Board[robotList.get(i).position[0]][robotList.get(i).position[1]] = 0;
-                    if (robotList.get(i).position[0] > clientPositions.get(closestClient)[0]) {
-                        robotList.get(i).position[0] -= 1;
-                    } else if (robotList.get(i).position[0] < clientPositions.get(closestClient)[0]) {
-                        robotList.get(i).position[0] += 1;
+                    Board[aRobotList.position[0]][aRobotList.position[1]] = 0;
+                    if (aRobotList.position[0] > clientPositions.get(closestClient)[0]) {
+                        aRobotList.position[0] -= 1;
+                    } else if (aRobotList.position[0] < clientPositions.get(closestClient)[0]) {
+                        aRobotList.position[0] += 1;
                     }
 
-                    if (robotList.get(i).position[1] > clientPositions.get(closestClient)[1]) {
-                        robotList.get(i).position[1] -= 1;
-                    } else if (robotList.get(i).position[1] < clientPositions.get(closestClient)[1]) {
-                        robotList.get(i).position[1] += 1;
+                    if (aRobotList.position[1] > clientPositions.get(closestClient)[1]) {
+                        aRobotList.position[1] -= 1;
+                    } else if (aRobotList.position[1] < clientPositions.get(closestClient)[1]) {
+                        aRobotList.position[1] += 1;
                     }
-                    robotList.get(i).hasMoved = true;
-                }
-                else
-                {
-                    robotList.get(i).hasMoved = false;
+                    aRobotList.hasMoved = true;
+                } else {
+                    aRobotList.hasMoved = false;
                 }
 
 
@@ -372,13 +368,9 @@ public class GameEngine implements Runnable {
                                 if(Settings.robotsLockToTarget)
                                 {
                                     //Reset so robots who followed the dead client is now not following anyone
-                                    for(Robot robot : robotList)
-                                    {
-                                        if(robot.lockedToClientID == clientId)
-                                        {
-                                            robot.lockedToClientID = -1;
-                                        }
-                                    }
+                                    robotList.stream().filter(robot -> robot.lockedToClientID == clientId).forEach(robot -> {
+                                        robot.lockedToClientID = -1;
+                                    });
 
                                     //Set so that the mentioned robots follow the one with the least locks on
                                     for(Robot robot : robotList)
@@ -465,7 +457,7 @@ public class GameEngine implements Runnable {
      */
     private int GetClientIdWithLeastLocks()
     {
-        List<ClientToLocksEntry> CTLE = new ArrayList<ClientToLocksEntry>();
+        List<ClientToLocksEntry> CTLE = new ArrayList<>();
         List<CommunicationThread> allClients = CommunicationThread.GetAllClients();
 
         if(!allClients.isEmpty()) {
@@ -585,7 +577,7 @@ public class GameEngine implements Runnable {
 
         else
         {
-            List<Integer> robotIdsAroundClient = new ArrayList<Integer>();
+            List<Integer> robotIdsAroundClient = new ArrayList<>();
 
             int[] clientPosition = GetClientOrRobotPosition(ClientId);
 
@@ -693,7 +685,7 @@ public class GameEngine implements Runnable {
      */
     private void CreateAndPlaceRobots(int numberOfRobots)
     {
-        robotList = new ArrayList<Robot>();
+        robotList = new ArrayList<>();
 
         for (int i = -2; i > -numberOfRobots - 2; i--)
         {
@@ -714,12 +706,8 @@ public class GameEngine implements Runnable {
      */
     private void KillRobot(int RobotId)
     {
-        Iterator<Robot> it = robotList.iterator();
-        while(it.hasNext())
-        {
-            Robot r = it.next();
-            if(r.ID == RobotId)
-            {
+        for (Robot r : robotList) {
+            if (r.ID == RobotId) {
                 robotList.remove(r);
                 break;
             }
@@ -808,18 +796,14 @@ public class GameEngine implements Runnable {
      */
     private boolean IsMoveCommand(String msg)
     {
-        if(msg.equals("move right") ||
+        return msg.equals("move right") ||
                 msg.equals("move left") ||
                 msg.equals("move down") ||
                 msg.equals("move up") ||
                 msg.equals("move up left") ||
                 msg.equals("move down left") ||
                 msg.equals("move up right") ||
-                msg.equals("move down right"))
-        {
-            return true;
-        }
-        return false;
+                msg.equals("move down right");
     }
 
     /**
@@ -876,13 +860,8 @@ public class GameEngine implements Runnable {
      * @param position Position to check if empty.
      * @return True if the position is not containing a robot, client or rubble. (If 0). False if it does.
      */
-    private boolean IsEmpty(int[] position)
-    {
-        if(OutOfBounds(position))
-        {
-            return false;
-        }
-        return Board[position[0]][position[1]] == 0;
+    private boolean IsEmpty(int[] position) {
+        return !OutOfBounds(position) && Board[position[0]][position[1]] == 0;
 
     }
 

@@ -5,8 +5,8 @@ package tobdyh131;
  *
  * A class the defines a robot.
  */
-public class Robot {
-    public int ID;
+class Robot {
+    public final int ID;
     public int[] position;
     public boolean hasMoved;
     public int lockedToClientID;

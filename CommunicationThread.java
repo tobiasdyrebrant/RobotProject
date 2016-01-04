@@ -1,7 +1,6 @@
 package tobdyh131;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -15,14 +14,14 @@ import java.util.logging.Logger;
  * Works as a bridge between the server and client.
  * Receives from the user, and passes messages to the server.
  */
-public class CommunicationThread implements Runnable{
+class CommunicationThread implements Runnable{
     private static int numberOfClients = 0;
-    private static CopyOnWriteArrayList<CommunicationThread> allClients = new CopyOnWriteArrayList<CommunicationThread>();
+    private static final CopyOnWriteArrayList<CommunicationThread> allClients = new CopyOnWriteArrayList<>();
     private static int PlayerTurnIndex = 1; // If 0, computers turn
     private int clientNumber = ++numberOfClients;
 
     public String clientUserName;
-    public int clientScore;
+    private int clientScore;
     private int numberOfSafeTeleportations;
     private int numberOfShortRangeAttacks;
 
@@ -30,12 +29,11 @@ public class CommunicationThread implements Runnable{
     private BufferedReader in;
     private PrintWriter out;
 
-    private String inline = "";
     private boolean deadlineForMoveReached = false;
 
-    public boolean playerAlive = true;
+    private boolean playerAlive = true;
 
-    private static Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+    private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
 
 
     /**
@@ -88,9 +86,9 @@ public class CommunicationThread implements Runnable{
      * Assigns a new username to the client if it's alread taken
      * @param userName Username that was already taken
      */
-    public void AssignNewUsername(String userName)
+    private void AssignNewUsername(String userName)
     {
-        String changedUsername = userName;
+        String changedUsername;
         boolean notTaken = false;
         int numberOfRepetitions = 1;
 
@@ -111,7 +109,7 @@ public class CommunicationThread implements Runnable{
      * @param username The username to check
      * @return
      */
-    public boolean UsernameTaken(String username)
+    private boolean UsernameTaken(String username)
     {
         boolean userNameExists = false;
         for (CommunicationThread CT: allClients
@@ -140,7 +138,7 @@ public class CommunicationThread implements Runnable{
                 if (GameEngine.GetGameStarted()) {
                     if (PlayerTurnIndex != 0) {
                         try {
-                            inline = in.readLine();
+                            String inline = in.readLine();
                             try {
                                 if (inline != null) {
                                     if (inline.equals("quit")) {
@@ -201,7 +199,7 @@ public class CommunicationThread implements Runnable{
      * A method that was used before the GUI was implemented.
      * Prints the board in the console window for a user.
      */
-    public void PrintBoard() {
+    private void PrintBoard() {
         if(PlayerTurnIndex != 0) {
             out.println("ROUND: " + GameEngine.Round + " LEVEL: " + GameEngine.Level + " PLAYER WITH ID " + allClients.get(PlayerTurnIndex - 1).clientNumber + "'s TURN" + " SAFE TP'S: "
                         + allClients.get(PlayerTurnIndex - 1).numberOfSafeTeleportations + " SRA'S: " + allClients.get(PlayerTurnIndex - 1).numberOfShortRangeAttacks);
@@ -228,7 +226,7 @@ public class CommunicationThread implements Runnable{
      * Passes the current high score list which is handled and displayed on the "client side".
      * @param ReasonForDeath The reason why the client has died, either killed by a robot or disconnected
      */
-    public void SendMessageOnDeath(String ReasonForDeath)
+    private void SendMessageOnDeath(String ReasonForDeath)
     {
         ArrayList<HighscoreInfo> highScoreList = LoadHighScore();
 
@@ -275,14 +273,14 @@ public class CommunicationThread implements Runnable{
      * Loads the current high score list from a specific file.
      * @return The high score list
      */
-    public ArrayList<HighscoreInfo> LoadHighScore()
+    private ArrayList<HighscoreInfo> LoadHighScore()
     {
-        ArrayList<HighscoreInfo> highScoreList = new ArrayList<HighscoreInfo>();
+        ArrayList<HighscoreInfo> highScoreList = new ArrayList<>();
 
         try {
             File file = new File(getClass().getResource("highscore.txt").toURI());
             //"C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\highscore.txt";
-            String line = null;
+            String line;
 
             try {
                 FileReader fileReader =
@@ -336,7 +334,7 @@ public class CommunicationThread implements Runnable{
      * @param highscoreInfoLine The line, which contain all information about the high score list, which is saved to the file.
      * @param highscoreLength The length of the high score list (How many users is in the list)
      */
-    public void SaveHighscore(String highscoreInfoLine, int highscoreLength)
+    private void SaveHighscore(String highscoreInfoLine, int highscoreLength)
     {
 
         try {
@@ -378,12 +376,8 @@ public class CommunicationThread implements Runnable{
      */
     public static void PrintBoardForAllClients()
     {
-        Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
-        while(it.hasNext())
-        {
-            CommunicationThread SCC = it.next();
-            if(SCC != null)
-            {
+        for (CommunicationThread SCC : CommunicationThread.allClients) {
+            if (SCC != null) {
                 SCC.PrintBoard();
             }
         }
@@ -396,12 +390,9 @@ public class CommunicationThread implements Runnable{
      */
     public static void SendMessageToClient(int ClientId, String msg)
     {
-        for (CommunicationThread SCC : CommunicationThread.GetAllClients()) {
-            if(SCC.GetClientId() == ClientId)
-            {
-                SCC.out.println(msg);
-            }
-        }
+        CommunicationThread.GetAllClients().stream().filter(SCC -> SCC.GetClientId() == ClientId).forEach(SCC -> {
+            SCC.out.println(msg);
+        });
     }
 
 
@@ -459,22 +450,14 @@ public class CommunicationThread implements Runnable{
      */
     public static synchronized  void KillClient(int ClientId)
     {
-        Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
-        while(it.hasNext())
-        {
-            CommunicationThread SCC = it.next();
-            if(SCC.clientNumber == ClientId)
-            {
-                try
-                {
+        for (CommunicationThread SCC : CommunicationThread.allClients) {
+            if (SCC.clientNumber == ClientId) {
+                try {
                     int index = allClients.indexOf(SCC);
                     //if removing client last in list, and it's their turn then its the computers turn
-                    if((index == allClients.size() - 1) && (GetPlayerTurn() - 1 == index))
-                    {
+                    if ((index == allClients.size() - 1) && (GetPlayerTurn() - 1 == index)) {
                         NextPlayerTurn();
-                    }
-                    else if(GetPlayerTurn() - 1 > index)
-                    {
+                    } else if (GetPlayerTurn() - 1 > index) {
                         DecreasePlayerTurn();
                     }
 
@@ -485,12 +468,10 @@ public class CommunicationThread implements Runnable{
                     allClients.remove(SCC);
                     numberOfClients = allClients.size();
                     SCC.playerAlive = false;
-                    if(!allClients.isEmpty() && (CommunicationThread.GetPlayerTurn() > 0))
+                    if (!allClients.isEmpty() && (CommunicationThread.GetPlayerTurn() > 0))
                         CommunicationThread.SendToClients("levelinfo;" + GameEngine.Round + ";" + GameEngine.Level + ";" + CommunicationThread.GetAllClients().get(CommunicationThread.GetPlayerTurn() - 1).GetClientId() + ";");
                     break;
-                }
-                catch(IOException e)
-                {
+                } catch (IOException e) {
                     LOGGER.info("Could not close socket: " + e.getMessage());
 
                 }
@@ -552,10 +533,7 @@ public class CommunicationThread implements Runnable{
      */
     public static synchronized void SetNumberOfShortRangeAttacks(int amount)
     {
-        Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
-        while(it.hasNext())
-        {
-            CommunicationThread SCC = it.next();
+        for (CommunicationThread SCC : CommunicationThread.allClients) {
             SCC.numberOfShortRangeAttacks = amount;
         }
     }
@@ -566,12 +544,8 @@ public class CommunicationThread implements Runnable{
      */
     public static synchronized void DecreaseNumberOfShortRangeAttacks(int ClientId)
     {
-        Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
-        while(it.hasNext())
-        {
-            CommunicationThread SCC = it.next();
-            if(SCC.clientNumber == ClientId)
-            {
+        for (CommunicationThread SCC : CommunicationThread.allClients) {
+            if (SCC.clientNumber == ClientId) {
                 SCC.numberOfShortRangeAttacks--;
                 break;
             }
@@ -584,10 +558,7 @@ public class CommunicationThread implements Runnable{
      */
     public static synchronized  void SetNumberOfSafeTeleportations(int amount)
     {
-        Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
-        while(it.hasNext())
-        {
-            CommunicationThread SCC = it.next();
+        for (CommunicationThread SCC : CommunicationThread.allClients) {
             SCC.numberOfSafeTeleportations = amount;
         }
     }
@@ -599,12 +570,8 @@ public class CommunicationThread implements Runnable{
      */
     public static synchronized void IncreaseNumberOfSafeTeleportations(int ClientId, int amount)
     {
-        Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
-        while(it.hasNext())
-        {
-            CommunicationThread SCC = it.next();
-            if(SCC.clientNumber == ClientId)
-            {
+        for (CommunicationThread SCC : CommunicationThread.allClients) {
+            if (SCC.clientNumber == ClientId) {
                 SCC.numberOfSafeTeleportations += amount;
                 break;
             }
@@ -617,12 +584,8 @@ public class CommunicationThread implements Runnable{
      */
     public static synchronized void DecreaseNumberOfSafeTeleportations(int ClientId)
     {
-        Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
-        while(it.hasNext())
-        {
-            CommunicationThread SCC = it.next();
-            if(SCC.clientNumber == ClientId)
-            {
+        for (CommunicationThread SCC : CommunicationThread.allClients) {
+            if (SCC.clientNumber == ClientId) {
                 SCC.numberOfSafeTeleportations--;
                 break;
             }
@@ -664,15 +627,10 @@ public class CommunicationThread implements Runnable{
      */
     public static void RespawnPlayers()
     {
-        Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
-        while(it.hasNext())
-        {
-            CommunicationThread SCC = it.next();
+        for (CommunicationThread SCC : CommunicationThread.allClients) {
             try {
                 Server.queue.put(new ComMessage("spawn", SCC.clientNumber));
-            }
-            catch(InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 LOGGER.info("Error while respawning clients: " + e.getMessage());
             }
         }
@@ -715,10 +673,7 @@ public class CommunicationThread implements Runnable{
     public static synchronized void ResetClientNumbers()
     {
         int newClientNumber = 0;
-        Iterator<CommunicationThread> it = CommunicationThread.allClients.iterator();
-        while(it.hasNext())
-        {
-            CommunicationThread SCC = it.next();
+        for (CommunicationThread SCC : CommunicationThread.allClients) {
             SCC.clientNumber = ++newClientNumber;
             SCC.out.println("id;" + SCC.clientNumber + ";");
 
@@ -728,7 +683,7 @@ public class CommunicationThread implements Runnable{
     /**
      * Sets the player turn index one step back.
      */
-    public static synchronized void DecreasePlayerTurn()
+    private static synchronized void DecreasePlayerTurn()
     {
         PlayerTurnIndex--;
     }
@@ -740,13 +695,9 @@ public class CommunicationThread implements Runnable{
      */
     public static synchronized void IncreaseScoreOfClient(int ClientID, int scoreIncrement)
     {
-        for (CommunicationThread CT: allClients
-             ) {
-            if(CT.GetClientId() == ClientID)
-            {
-                CT.clientScore += scoreIncrement;
-            }
-        }
+        allClients.stream().filter(CT -> CT.GetClientId() == ClientID).forEach(CT -> {
+            CT.clientScore += scoreIncrement;
+        });
     }
 
     /**

@@ -1,15 +1,13 @@
 package tobdyh131;
 
-import java.util.Comparator;
-
 /**
  * Created by Tobias on 2015-12-17.
  *
  * A class that is used when handling with the case when robots
  * locks to a certain client.
  */
-public class ClientToLocksEntry implements Comparable<ClientToLocksEntry> {
-    public int ClientId;
+class ClientToLocksEntry implements Comparable<ClientToLocksEntry> {
+    public final int ClientId;
     public int NumberOfLocks;
 
     /**

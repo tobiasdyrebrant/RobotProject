@@ -1,20 +1,11 @@
 package tobdyh131;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 
-import java.awt.event.ActionEvent;
-import java.beans.EventHandler;
-import java.time.Duration;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -23,9 +14,9 @@ import java.util.HashMap;
  * This is the class the controls the screens to be shown (the GUI).
  * Handles loading screens and switching between them.
  */
-public class ScreensController extends StackPane {
+class ScreensController extends StackPane {
 
-    private HashMap<String, Node> screens = new HashMap<>();
+    private final HashMap<String, Node> screens = new HashMap<>();
 
 
     public Node getScreen(String name)
@@ -33,7 +24,7 @@ public class ScreensController extends StackPane {
         return screens.get(name);
     }
 
-    public void addScreen(String name, Node screen) {
+    private void addScreen(String name, Node screen) {
         screens.put(name, screen);
     }
 
@@ -45,22 +36,22 @@ public class ScreensController extends StackPane {
      * @param c The client to be passed to the controller.
      * @return True if succeeded, false if not.
      */
-    public boolean loadScreen(String name, String resource, Client c) {
+    public void loadScreen(String name, String resource, Client c) {
         try {
             FXMLLoader myLoader = new
                     FXMLLoader(getClass().getResource(resource));
-            Parent loadScreen = (Parent) myLoader.load();
+            Parent loadScreen = myLoader.load();
             ControlledScreen myScreenController =
-                    ((ControlledScreen) myLoader.getController());
+                    myLoader.getController();
             myScreenController.setScreenParent(this);
 
             myLoader.<ClientPlayingController>getController().myClient = c;
 
             addScreen(name, loadScreen);
-            return true;
+            return;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return false;
+            return;
         }
     }
 
@@ -71,13 +62,13 @@ public class ScreensController extends StackPane {
      * @param s The server to be passed to the controller.
      * @return True if succeeded, false if not.
      */
-    public boolean loadScreen(String name, String resource, Server s) {
+    public void loadScreen(String name, String resource, Server s) {
         try {
             FXMLLoader myLoader = new
                     FXMLLoader(getClass().getResource(resource));
-            Parent loadScreen = (Parent) myLoader.load();
+            Parent loadScreen = myLoader.load();
             ControlledScreen myScreenController =
-                    ((ControlledScreen) myLoader.getController());
+                    myLoader.getController();
             myScreenController.setScreenParent(this);
 
             myLoader.<ServerDuringConnectionController>getController().server = s;
@@ -85,10 +76,10 @@ public class ScreensController extends StackPane {
             s.controller = myLoader.<ServerDuringConnectionController>getController();
 
             addScreen(name, loadScreen);
-            return true;
+            return;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return false;
+            return;
         }
     }
 
@@ -99,22 +90,22 @@ public class ScreensController extends StackPane {
      * @param s The server settings to be passed to the controller.
      * @return True if succeeded, false if not.
      */
-    public boolean loadScreen(String name, String resource, ServerSettings s) {
+    public void loadScreen(String name, String resource, ServerSettings s) {
         try {
             FXMLLoader myLoader = new
                     FXMLLoader(getClass().getResource(resource));
-            Parent loadScreen = (Parent) myLoader.load();
+            Parent loadScreen = myLoader.load();
             ControlledScreen myScreenController =
-                    ((ControlledScreen) myLoader.getController());
+                    myLoader.getController();
             myScreenController.setScreenParent(this);
 
             myLoader.<ServerPlayingController>getController().settings = s;
 
             addScreen(name, loadScreen);
-            return true;
+            return;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return false;
+            return;
         }
     }
 
@@ -125,13 +116,13 @@ public class ScreensController extends StackPane {
      * @param ConsecutiveRound If true, then load settings from previous session. If false, don't.
      * @return True if succeeded, false if not.
      */
-    public boolean loadScreen(String name, String resource, boolean ConsecutiveRound) {
+    public void loadScreen(String name, String resource, boolean ConsecutiveRound) {
         try {
             FXMLLoader myLoader = new
                     FXMLLoader(getClass().getResource(resource));
-            Parent loadScreen = (Parent) myLoader.load();
+            Parent loadScreen = myLoader.load();
             ControlledScreen myScreenController =
-                    ((ControlledScreen) myLoader.getController());
+                    myLoader.getController();
             myScreenController.setScreenParent(this);
 
             if(ConsecutiveRound)
@@ -140,10 +131,10 @@ public class ScreensController extends StackPane {
             }
 
             addScreen(name, loadScreen);
-            return true;
+            return;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return false;
+            return;
         }
     }
 
@@ -154,22 +145,22 @@ public class ScreensController extends StackPane {
      * @param highscoreList The high score list to be passed to the controller.
      * @return True if succeeded, false if not.
      */
-    public boolean loadScreen(String name, String resource, ObservableList<HighscoreInfo> highscoreList) {
+    public void loadScreen(String name, String resource, ObservableList<HighscoreInfo> highscoreList) {
         try {
             FXMLLoader myLoader = new
                     FXMLLoader(getClass().getResource(resource));
-            Parent loadScreen = (Parent) myLoader.load();
+            Parent loadScreen = myLoader.load();
             ControlledScreen myScreenController =
-                    ((ControlledScreen) myLoader.getController());
+                    myLoader.getController();
             myScreenController.setScreenParent(this);
 
             myLoader.<HighscoreController>getController().highscoreList = highscoreList;
 
             addScreen(name, loadScreen);
-            return true;
+            return;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return false;
+            return;
         }
     }
 
@@ -179,19 +170,19 @@ public class ScreensController extends StackPane {
      * @param resource Which resource to be loaded.
      * @return True if succeeded, false if not.
      */
-    public boolean loadScreen(String name, String resource) {
+    public void loadScreen(String name, String resource) {
         try {
             FXMLLoader myLoader = new
                     FXMLLoader(getClass().getResource(resource));
-            Parent loadScreen = (Parent) myLoader.load();
+            Parent loadScreen = myLoader.load();
             ControlledScreen myScreenController =
-                    ((ControlledScreen) myLoader.getController());
+                    myLoader.getController();
             myScreenController.setScreenParent(this);
             addScreen(name, loadScreen);
-            return true;
+            return;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return false;
+            return;
         }
     }
 
@@ -200,7 +191,7 @@ public class ScreensController extends StackPane {
      * @param name Name of the screen to be shown.
      * @return True if succeded, false if not.
      */
-    public boolean setScreen(final String name) {
+    public void setScreen(final String name) {
 
         if (screens.get(name) != null) { //screen loaded
 
@@ -214,15 +205,14 @@ public class ScreensController extends StackPane {
                 //no one else been displayed, then just show
                 getChildren().add(screens.get(name));
 
-                return true;
+                return;
             }
         } else {
             System.out.println("screen hasn't been loaded!\n");
-            return false;
+            return;
         }
 
 
-        return false;
     }
 
     /**

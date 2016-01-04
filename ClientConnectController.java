@@ -1,18 +1,11 @@
 package tobdyh131;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.util.ResourceBundle;
@@ -25,7 +18,7 @@ import java.util.ResourceBundle;
  */
 public class ClientConnectController implements Initializable, ControlledScreen{
 
-    ScreensController myController;
+    private ScreensController myController;
 
     @FXML
     private TextField IP;
@@ -137,12 +130,12 @@ public class ClientConnectController implements Initializable, ControlledScreen{
      * Reads from a file with what information the user used the last connection.
      * Then sets the text fields to that information.
      */
-    public void ReadFromFile()
+    private void ReadFromFile()
     {
         try {
             File file = new File(getClass().getResource("clientInfo.txt").toURI());
                 //"C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\clientInfo.txt";
-            String line = null;
+            String line;
 
             try {
                 FileReader fileReader =
@@ -182,7 +175,7 @@ public class ClientConnectController implements Initializable, ControlledScreen{
      * Before closing, the information used for connection is saved to a file
      * using this method.
      */
-    public void WriteToFile() {
+    private void WriteToFile() {
         try {
             File file = new File(getClass().getResource("clientInfo.txt").toURI());
 

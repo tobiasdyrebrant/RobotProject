@@ -20,6 +20,11 @@ public class StartServer extends Application{
         launch();
     }
 
+    public StartServer()
+    {
+
+    }
+
     /**
      * This method is called in the main function. It starts the GUI for a
      * server to be created.

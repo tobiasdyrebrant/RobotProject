@@ -21,9 +21,9 @@ import java.util.ResourceBundle;
  */
 public class ServerDuringConnectionController implements Initializable, ControlledScreen{
 
-    ScreensController myController;
+    private ScreensController myController;
 
-    public ObservableList<String> listOfPlayers = FXCollections.observableArrayList();
+    public final ObservableList<String> listOfPlayers = FXCollections.observableArrayList();
 
     public Server server;
 

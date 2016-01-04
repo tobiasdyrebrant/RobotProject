@@ -1,11 +1,6 @@
 package tobdyh131;
 
 
-import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
 import java.io.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -18,13 +13,11 @@ import java.util.logging.Logger;
  * and pass the further to the game engine which then handles these messages.
  */
 public class Server implements Runnable {
-    private static Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+    private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
 
-    public static BlockingQueue<ComMessage> queue = new LinkedBlockingQueue<ComMessage>();
+    public static final BlockingQueue<ComMessage> queue = new LinkedBlockingQueue<>();
 
-    private BufferedReader kdb_reader;
-    private ComMessage msg;
-    private String buf;
+    private final BufferedReader kdb_reader;
 
     private ServerSettings Settings;
 
@@ -75,6 +68,7 @@ public class Server implements Runnable {
         while(GameEngine.GetSessionOnGoing())
         {
             if(GameEngine.GetGameStarted()) {
+                ComMessage msg;
                 while ((msg = queue.poll()) != null) {
                     try {
                         GameEngine.queue.put(msg);

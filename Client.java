@@ -1,21 +1,10 @@
 package tobdyh131;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -24,17 +13,15 @@ import java.util.logging.Logger;
  * This is the Client, its main purpose is to pass messages from the user
  * through the socket where the message is received and handled.
  */
-public class Client implements Runnable{
-    private static Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+class Client implements Runnable{
+    private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
 
-    public BlockingQueue<String> queue = new LinkedBlockingQueue<String>();
+    public final BlockingQueue<String> queue = new LinkedBlockingQueue<>();
 
     public BufferedReader in;
     private PrintWriter out;
     private BufferedReader kdb_reader;
     private Socket socket;
-
-    private String buf;
 
     private boolean Connected = true;
 
@@ -75,6 +62,7 @@ public class Client implements Runnable{
     {
         while(Connected)
         {
+            String buf;
             while ((buf = queue.poll()) != null) {
 
                 out.println(buf);

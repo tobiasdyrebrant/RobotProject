@@ -1,13 +1,10 @@
 package tobdyh131;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -20,7 +17,7 @@ import java.util.ResourceBundle;
  * This class reacts and handles events on the server/admin side while the game is in the startup phase.
  */
 public class ServerStartupController implements Initializable, ControlledScreen{
-    ScreensController myController;
+    private ScreensController myController;
 
     @FXML
     private Button hostButton;
@@ -185,7 +182,7 @@ public class ServerStartupController implements Initializable, ControlledScreen{
             File file = new File(getClass().getResource("serverInfo.txt").toURI());
 
             //"C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\serverInfo.txt";
-            String line = null;
+            String line;
 
             try {
                 FileReader fileReader =
@@ -285,7 +282,7 @@ public class ServerStartupController implements Initializable, ControlledScreen{
      * on consecutive rounds.
      * @param s Settings of the server.
      */
-    public void WriteToFile(ServerSettings s) {
+    private void WriteToFile(ServerSettings s) {
         try {
             File file = new File(getClass().getResource("serverInfo.txt").toURI());
             //"C:\\Users\\Tobias\\IdeaProjects\\RobotProject_v3\\src\\tobdyh131\\serverInfo.txt";

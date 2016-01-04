@@ -1,16 +1,10 @@
 package tobdyh131;
 
-import com.sun.jmx.remote.internal.ServerCommunicatorAdmin;
-import com.sun.media.jfxmedia.events.PlayerStateEvent;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -19,14 +13,13 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tobias on 2015-12-22.
@@ -56,13 +49,13 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
     private GridPane gridPane;
 
 
-    ScreensController myController;
+    private ScreensController myController;
 
     public ServerSettings settings;
 
-    public int Board[][];
+    private int[][] Board;
 
-    public ObservableList<ClientStats> scoreBoard = FXCollections.observableArrayList();
+    private final ObservableList<ClientStats> scoreBoard = FXCollections.observableArrayList();
 
     /**
      * Initialize function of the controller which is called absolutely first.
@@ -126,7 +119,7 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
      * @param height Height of the board.
      * @param width Width of the board.
      */
-    public void CreateBoard(int height, int width ){
+    private void CreateBoard(int height, int width){
         Platform.runLater(()->{
             Board = new int[height][width];
             float rowHeight = (((float)height)/559)*1000;
@@ -196,7 +189,7 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
      * @param clientID The users id so the right picture is chosen
      * @return An Image View which is used on the board.
      */
-    public ImageView LoadPlayerImage(int clientID)
+    private ImageView LoadPlayerImage(int clientID)
     {
         try
         {
@@ -210,7 +203,7 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
         }
         catch(URISyntaxException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
         return null;
@@ -221,7 +214,7 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
      * @param fileName The name of the file to be loaded
      * @return An Image View which is used on the board.
      */
-    public ImageView LoadPicture(String fileName)
+    private ImageView LoadPicture(String fileName)
     {
         try
         {
@@ -235,7 +228,7 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
         }
         catch(URISyntaxException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
         return null;
@@ -249,10 +242,7 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
     public void CreateScoreBoard(CopyOnWriteArrayList<CommunicationThread> allClients)
     {
         Platform.runLater(()->{
-        for (CommunicationThread CT: allClients
-             ) {
-            scoreBoard.add(new ClientStats(CT.clientUserName, CT.GetClientId(), 0));
-        }
+            scoreBoard.addAll(allClients.stream().map(CT -> new ClientStats(CT.clientUserName, CT.GetClientId())).collect(Collectors.toList()));
 
             UpdateScoreBoard();
         });
@@ -262,7 +252,7 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
     /**
      * Updates the score board when a client has increased their score.
      */
-    public void UpdateScoreBoard()
+    private void UpdateScoreBoard()
     {
         Platform.runLater(()->{
             scoreBoardView.getItems().clear();
@@ -278,13 +268,9 @@ public class ServerPlayingController implements Initializable, ControlledScreen{
     public void IncreasePointsOfPlayer(String UserName, int Points)
     {
 
-            for (ClientStats player: scoreBoard
-                 ) {
-                if(UserName.equals(player.clientUserName))
-                {
-                    player.score += Points;
-                }
-            }
+        scoreBoard.stream().filter(player -> UserName.equals(player.clientUserName)).forEach(player -> {
+            player.score += Points;
+        });
 
             UpdateScoreBoard();
 

@@ -5,22 +5,21 @@ package tobdyh131;
  *
  * A class which describes the stats of the user.
  */
-public class ClientStats {
-    public String clientUserName;
-    public int clientID;
+class ClientStats {
+    public final String clientUserName;
+    private final int clientID;
     public int score;
 
     /**
      * The constructor that creates the clients stats based on the arguments.
      * @param ClientUserName Username of the client
      * @param ClientID Id of the client
-     * @param Score Score of the client
      */
-    public ClientStats(String ClientUserName,int ClientID,  int Score)
+    public ClientStats(String ClientUserName, int ClientID)
     {
         clientUserName = ClientUserName;
         clientID = ClientID;
-        score = Score;
+        score = 0;
     }
 
     /**

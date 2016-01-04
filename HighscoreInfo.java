@@ -5,9 +5,9 @@ package tobdyh131;
  *
  * A class which defines a high score.
  */
-public class HighscoreInfo {
-    public String userName;
-    public int score;
+class HighscoreInfo {
+    public final String userName;
+    public final int score;
 
     /**
      * The constructor that creates the high score info based on the arguments.

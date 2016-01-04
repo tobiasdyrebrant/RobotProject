@@ -2,10 +2,8 @@ package tobdyh131;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -14,14 +12,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,19 +28,19 @@ import java.util.TimerTask;
  */
 public class ClientPlayingController implements Initializable, ControlledScreen{
 
-    ScreensController myController;
+    private ScreensController myController;
 
     Client myClient;
 
     public int clientId;
 
-    public int playerTurn;
+    private int playerTurn;
 
-    public int Board[][];
+    private int[][] Board;
 
-    public Timer timer;
+    private Timer timer;
 
-    boolean DoingTurn = false;
+    private boolean DoingTurn = false;
 
     private float rowHeight;
     private float colWidth;
@@ -150,7 +144,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to move right.
      */
     @FXML
-    public void handleMoveRight()
+    private void handleMoveRight()
     {
 
         try
@@ -176,7 +170,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to move up right (Diagonal)
      */
     @FXML
-    public void handleMoveUpRight()
+    private void handleMoveUpRight()
     {
         try
         {
@@ -201,7 +195,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to move down right (Diagonal)
      */
     @FXML
-    public void handleMoveDownRight()
+    private void handleMoveDownRight()
     {
         try
         {
@@ -226,7 +220,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to move left.
      */
     @FXML
-    public void handleMoveLeft()
+    private void handleMoveLeft()
     {
         try
         {
@@ -251,7 +245,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to move up left (Diagonal)
      */
     @FXML
-    public void handleMoveUpLeft()
+    private void handleMoveUpLeft()
     {
         try
         {
@@ -276,7 +270,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to move down left (Diagonal).
      */
     @FXML
-    public void handleMoveDownLeft()
+    private void handleMoveDownLeft()
     {
         try
         {
@@ -301,7 +295,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to move down.
      */
     @FXML
-    public void handleMoveDown()
+    private void handleMoveDown()
     {
         try
         {
@@ -326,7 +320,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to move up.
      */
     @FXML
-    public void handleMoveUp()
+    private void handleMoveUp()
     {
         try
         {
@@ -351,7 +345,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to perform a random teleport.
      */
     @FXML
-    public void handleRandomTeleport()
+    private void handleRandomTeleport()
     {
         try
         {
@@ -376,7 +370,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to perform a safe teleport.
      */
     @FXML
-    public void handleSafeTeleport()
+    private void handleSafeTeleport()
     {
         try
         {
@@ -402,7 +396,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * Called when the user wants to perform a short range attack.
      */
     @FXML
-    public void handleShortRangeAttack()
+    private void handleShortRangeAttack()
     {
         try
         {
@@ -428,7 +422,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * is over.
      */
     @FXML
-    public void handleWait()
+    private void handleWait()
     {
         try
         {
@@ -588,7 +582,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * @param clientID The users id so the right picture is chosen
      * @return An Image View which is used on the board.
      */
-    public ImageView LoadPlayerImage(int clientID)
+    private ImageView LoadPlayerImage(int clientID)
     {
         try
         {
@@ -602,7 +596,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(URISyntaxException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
         return null;
@@ -613,7 +607,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
      * @param fileName The name of the file to be loaded
      * @return An Image View which is used on the board.
      */
-    public ImageView LoadPicture(String fileName)
+    private ImageView LoadPicture(String fileName)
     {
         try
         {
@@ -627,7 +621,7 @@ public class ClientPlayingController implements Initializable, ControlledScreen{
         }
         catch(URISyntaxException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
         return null;

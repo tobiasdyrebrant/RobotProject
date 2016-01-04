@@ -5,7 +5,7 @@ package tobdyh131;
  *
  * An interface used by all the GUI-controllers.
  */
-public interface ControlledScreen {
+interface ControlledScreen {
 
-    public void setScreenParent(ScreensController screenParent);
+    void setScreenParent(ScreensController screenParent);
 }
